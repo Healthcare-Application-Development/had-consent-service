@@ -31,21 +31,21 @@ paths:
         '404':
           description: Credentials not found
 
-  /patient/consent-requests:
-    post:
+  /patient/consent-requests/{patientID}:
+    get:
       tags:
         - consent request
       summary: Patients get all consent requests
       description: Patient can view consent requests
       operationId: getConsentRequests
-      requestBody:
-        description: get all consent requests from doctors
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConsentRequests'
-
-        required: true
+      parameters:
+        - name: patientID
+          in: path
+          description: ID of patient to return
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -80,8 +80,31 @@ paths:
                 $ref: '#/components/schemas/consentResponse'          
         '405':
           description: Invalid input
+          
+  /validator:
+    post:
+      tags:
+        - validate
+      summary: checks if consent is still valid or revoked or dosent exist
+      description: Mediator service will use this API to validate if it should send data to a doctor upon request
+      operationId: validateDataTransfer
+      requestBody:
+        description: send consent request based on patient ABHA ID
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validatorRequestBody'
 
-    
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validatorResponse'          
+        '405':
+          description: Invalid input
 
 components:
   schemas:
@@ -96,15 +119,17 @@ components:
           type: string
           format: password
           example: "*******"
-
-    ConsentRequests:
+    LoginResponse:
       type: object
       properties:
-        ABHA_ID:
+        user:
           type: string
           format: string
-          example: "1986672626"
-
+          enum:
+          - "doctor"
+          - "patient"
+          example: "doctor"
+          
     consentRequestsResponse:
       type: object
       properties:
@@ -122,7 +147,7 @@ components:
             anyOf:
               - $ref: '#/components/schemas/consentArtifactItems'
     consentArtifactItems:
-      type: object
+          type: object
           properties:
             category:
               type: string
@@ -161,3 +186,27 @@ components:
           type: string
           format: string
           example: "consent requested successfully"
+          
+    validatorRequestBody:
+      type: object
+      properties:
+        ABHA_ID:
+          type: string
+          format: string
+          example: "201822222"
+        Doctor_ID:
+          type: string
+          format: string
+          example: "h1_d1"
+        Consent_artifact_ID:
+          type: string
+          format: string
+          example: "143"
+          
+    validatorResponse:
+      type: object
+      properties:
+        validity:
+          type: boolean
+          format: boolean
+          example: true
