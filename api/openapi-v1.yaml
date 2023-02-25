@@ -6,6 +6,87 @@ servers:
   - url: http://localhost:9765
 
 paths:
+  /retrieve_logs:
+    get:
+      tags:
+      - Super Administrator
+      summary: Retrieve Logs
+      description: |
+        By passing in the appropriate options, you can search for
+        available logs in the system
+      operationId: retrieveLogs
+      parameters:
+      - name: time
+        in: query
+        description: Time for which logs are retrieved
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: ABHA_ID
+        in: query
+        description: retrieve logs by hospital ID
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 0
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: search results matching criteria
+        "400":
+          description: bad input parameter
+  /add_hospital_instance:
+    post:
+      tags:
+      - Super Administrator
+      summary: adds a hospital
+      operationId: addHospital
+      requestBody:
+        description: Adds an item to the system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hospitals'
+        required: true
+      responses:
+        "201":
+          description: Hospital created
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+  /add_category:
+    post:
+      tags:
+      - Super Administrator
+      summary: Add Medical Category
+      description: Adds Category
+      operationId: addCategory
+      requestBody:
+        description: Create a new patient in a hospital
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Categories'
+        required: true
+      responses:
+        "201":
+          description: item added
+        "400":
+          description: invalid input, object invalid
   /login:
     post:
       tags:
@@ -173,3 +254,37 @@ components:
           type: boolean
           format: boolean
           example: true
+    Hospitals:
+      type: object
+      properties:
+        H_ID:
+          type: integer
+          format: int64
+        H_NAME:
+          type: string
+    Categories:
+      type: object
+      properties:
+        Category_id:
+          type: integer
+          format: int64
+        Category_name:
+          type: string
+    Logs:
+      type: object
+      properties:
+        ABHA_ID:
+          type: integer
+          format: int64
+        NPI_ID:
+          type: integer
+          format: int64
+        timestamp:
+          type: integer
+          format: int64
+        Artifact_ID:
+          type: integer
+          format: int64
+        msg:
+          type: string
+
