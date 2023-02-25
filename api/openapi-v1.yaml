@@ -291,7 +291,6 @@ components:
           type: boolean
           format: boolean
           example: true
-    schemas:
     Hospitals:
       type: object
       properties:
