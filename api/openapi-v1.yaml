@@ -153,7 +153,11 @@ components:
               type: string
               format: string
               example: "blood report"
-            date-range:
+            from:
+              type: string
+              format: date
+              example: '2022-07-01'
+            to:
               type: string
               format: date
               example: '2022-07-01'
