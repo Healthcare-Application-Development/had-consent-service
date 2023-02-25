@@ -1,1 +1,212 @@
+openapi: 3.0.3
+info:
+  title: CMS Service
+  version: 1.0.11
+servers:
+  - url: http://localhost:9765
 
+paths:
+  /login:
+    post:
+      tags:
+        - login
+      summary: Login the doctors and patients to the CMS
+      description: Based on the username and password we will login doctor and patient
+      operationId: loginUsers
+      requestBody:
+        description: Login the doctors and patients to the CMS
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'          
+        '404':
+          description: Credentials not found
+
+  /patient/consent-requests/{patientID}:
+    get:
+      tags:
+        - consent request
+      summary: Patients get all consent requests
+      description: Patient can view consent requests
+      operationId: getConsentRequests
+      parameters:
+        - name: patientID
+          in: path
+          description: ID of patient to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentRequestsResponse'          
+        '405':
+          description: Invalid input
+
+  /doctor/request-consent:
+    post:
+      tags:
+        - Doctor request consent
+      summary: Doctor request consent from patients
+      description: Doctor can create a custom consent artifact and request consent
+      operationId: sendConsentRequest
+      requestBody:
+        description: send consent request based on patient ABHA ID
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestConsent'
+
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentResponse'          
+        '405':
+          description: Invalid input
+          
+  /validator:
+    post:
+      tags:
+        - validate
+      summary: checks if consent is still valid or revoked or dosent exist
+      description: Mediator service will use this API to validate if it should send data to a doctor upon request
+      operationId: validateDataTransfer
+      requestBody:
+        description: send consent request based on patient ABHA ID
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validatorRequestBody'
+
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validatorResponse'          
+        '405':
+          description: Invalid input
+
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: string
+          example: "email@example.com"
+        password:
+          type: string
+          format: password
+          example: "*******"
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          type: string
+          format: string
+          enum:
+          - "doctor"
+          - "patient"
+          example: "doctor"
+          
+    consentRequestsResponse:
+      type: object
+      properties:
+        consentArtifactId:
+          type: string
+          format: string
+          example: "19"
+        doctorId:
+          type: string
+          format: string
+          example: "h1-d1"
+        requests:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/consentArtifactItems'
+    consentArtifactItems:
+          type: object
+          properties:
+            category:
+              type: string
+              format: string
+              example: "blood report"
+            date-range:
+              type: string
+              format: date
+              example: '2022-07-01'
+            hospital:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: string
+                  example: "h1"
+                name:
+                  type: string
+                  format: string
+                  example: "hospital 1"
+    requestConsent:
+      type: object
+      properties:
+        ABHA_ID:
+          type: string
+          format: string
+          example: "1986672626"
+        consentArtifact:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/consentArtifactItems'
+    consentResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          format: string
+          example: "consent requested successfully"
+          
+    validatorRequestBody:
+      type: object
+      properties:
+        ABHA_ID:
+          type: string
+          format: string
+          example: "201822222"
+        Doctor_ID:
+          type: string
+          format: string
+          example: "h1_d1"
+        Consent_artifact_ID:
+          type: string
+          format: string
+          example: "143"
+          
+    validatorResponse:
+      type: object
+      properties:
+        validity:
+          type: boolean
+          format: boolean
+          example: true
