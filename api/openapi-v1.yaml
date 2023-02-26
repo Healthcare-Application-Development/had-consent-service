@@ -136,6 +136,29 @@ paths:
                 $ref: '#/components/schemas/consentResponse'          
         '405':
           description: Invalid input
+  /doctor/get-consent:
+    get:
+      tags:
+        - Doctor request consent
+      summary: Doctor retreives the consents 
+      description: Doctor wants to retreive all the consents that he has made.
+      operationId: getConsentRequest
+      parameters:
+        - name: NPI_ID
+          in: query
+          description: NPI ID to retreive consents that he has requested
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentGetResponse'          
+        '405':
+          description: Invalid input
           
   /validator:
     post:
@@ -201,7 +224,18 @@ components:
               type: string
               format: date
               example: '2022-07-01'
-            hospital:
+            source_hospital:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: string
+                  example: "h2"
+                name:
+                  type: string
+                  format: string
+                  example: "hospital 2"
+            dest_hospital:
               type: object
               properties:
                 id:
@@ -287,4 +321,14 @@ components:
           format: int64
         msg:
           type: string
-
+    ConsentGetResponse:
+      type: object
+      properties:
+        NPI_ID:
+          type: integer
+          example: 1
+        consentArtifact:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/consentArtifactItems'
+      
