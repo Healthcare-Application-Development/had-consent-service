@@ -2,8 +2,11 @@ package com.example.hadconsentservice.service;
 
 import com.example.hadconsentservice.bean.Consent;
 import com.example.hadconsentservice.bean.ConsentRequest;
+import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.PatientInterface;
 import com.example.hadconsentservice.repository.ConsentRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +22,7 @@ public class PatientService implements PatientInterface {
     }
 
     @Override
-    public List<Consent> getAllConsentsByID(Integer patientID) {
+    public ResponseEntity<Response> getAllConsentsByID(Integer patientID) {
         List<Consent> consentList = consentRepository.findAllByPatientID(patientID);
         List<Consent> updatedConsentList = new ArrayList<>();
 
@@ -28,11 +31,11 @@ public class PatientService implements PatientInterface {
                 updatedConsentList.add(consent);
             }
         }
-        return updatedConsentList;
+        return new ResponseEntity<>(new Response(updatedConsentList, 200), HttpStatus.OK);
     }
 
     @Override
-    public Consent updateConsentStatus(Integer consentID, ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentStatus(Integer consentID, ConsentRequest consentRequest) {
         Optional<Consent> optionalConsent = consentRepository.findById(consentID);
         Consent consent = null;
         if (optionalConsent.isPresent())
@@ -44,7 +47,12 @@ public class PatientService implements PatientInterface {
         }
         consent.setConsentAcknowledged(true);
         consent.setApproved(consentRequest.getApproved());
-        consentRepository.save(consent);
-        return consent;
+        try {
+            consentRepository.save(consent);
+            return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Response(e.getMessage(), 400), HttpStatus.NOT_FOUND);
+        }
+
     }
 }

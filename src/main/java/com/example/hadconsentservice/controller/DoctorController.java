@@ -2,12 +2,14 @@ package com.example.hadconsentservice.controller;
 
 import com.example.hadconsentservice.bean.Consent;
 import com.example.hadconsentservice.bean.ConsentRequest;
+import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.DoctorInterface;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -26,7 +28,7 @@ public class DoctorController {
     }
 
     @PostMapping("/doctor-request")
-    public ResponseEntity<List<Consent>> handleDoctorRequest(@RequestBody ConsentRequest consentRequest) {
+    public ResponseEntity<Response> handleDoctorRequest(@RequestBody ConsentRequest consentRequest) throws ParseException {
         Consent consent = new Consent();
         consent.setDoctorID(consentRequest.getDoctorId());
         consent.setPatientID(consentRequest.getPatientId());
@@ -34,14 +36,16 @@ public class DoctorController {
         consent.setConsentAcknowledged(false);
         consent.setApproved(false);
         consent.setHospitalId(consentRequest.getHospitalId());
+        consent.setFromDate(new SimpleDateFormat("yyyy-MM-dd").parse(consentRequest.getFromDate()));
+        consent.setToDate(new SimpleDateFormat("yyyy-MM-dd").parse(consentRequest.getToDate()));
         doctorInterface.sendConsentRequest(consent);
-        return ResponseEntity.ok(doctorInterface.getConsentsByDoctorID(consentRequest.getDoctorId()));
+
+        return doctorInterface.getConsentsByDoctorID(consentRequest.getDoctorId());
     }
 
     @GetMapping("/getAllConsents")
-    public ResponseEntity<List<Consent>> getConsentsByDoctorID(@PathParam("id") Integer id) {
-        List<Consent> consentList = doctorInterface.getConsentsByDoctorID(id);
-        return ResponseEntity.ok(consentList);
+    public ResponseEntity<Response> getConsentsByDoctorID(@PathParam("id") Integer id) {
+        return doctorInterface.getConsentsByDoctorID(id);
     }
 //
 //    {

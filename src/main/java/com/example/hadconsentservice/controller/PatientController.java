@@ -2,6 +2,7 @@ package com.example.hadconsentservice.controller;
 
 import com.example.hadconsentservice.bean.Consent;
 import com.example.hadconsentservice.bean.ConsentRequest;
+import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.PatientInterface;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ public class PatientController {
 
 
     @GetMapping("/getAllConsents")
-    public ResponseEntity<List<Consent>> getConsentsByID(@PathParam("id") Integer id) {
-        return ResponseEntity.ok(patientInterface.getAllConsentsByID(id));
+    public ResponseEntity<Response> getConsentsByID(@PathParam("id") Integer id) {
+        return patientInterface.getAllConsentsByID(id);
     }
 
     @PutMapping("/updateConsentStatus/{id}")
-    public ResponseEntity<List<Consent>> updateConsentStatus(@PathVariable("id") Integer id, @RequestBody ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentStatus(@PathVariable("id") Integer id, @RequestBody ConsentRequest consentRequest) {
         patientInterface.updateConsentStatus(id, consentRequest);
-        return ResponseEntity.ok(patientInterface.getAllConsentsByID(consentRequest.getPatientId()));
+        return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
     }
 }
