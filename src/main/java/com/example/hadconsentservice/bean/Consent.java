@@ -2,6 +2,8 @@ package com.example.hadconsentservice.bean;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "consent_request")
 public class Consent {
@@ -18,7 +20,8 @@ public class Consent {
     private Boolean consentAcknowledged;
 
     private Boolean approved;
-
+    private Date fromDate;
+    private Date toDate;
     public Integer getHospitalId() {
         return hospitalId;
     }
@@ -41,14 +44,32 @@ public class Consent {
 
     }
 
-    public Consent(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Integer hospitalId) {
+    public Consent(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, Integer hospitalId) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
         this.consentMessage = consentMessage;
         this.consentAcknowledged = consentAcknowledged;
         this.approved = approved;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
         this.hospitalId = hospitalId;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
     }
 
     public Integer getId() {
