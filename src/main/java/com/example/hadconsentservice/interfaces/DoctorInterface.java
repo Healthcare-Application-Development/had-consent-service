@@ -1,10 +1,12 @@
 package com.example.hadconsentservice.interfaces;
 
 import com.example.hadconsentservice.bean.Consent;
+import com.example.hadconsentservice.bean.Response;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface DoctorInterface {
-    void sendConsentRequest(Consent consentRequest);
-    List<Consent> getConsentsByDoctorID(Integer doctorID);
+    ResponseEntity<Response> sendConsentRequest(Consent consentRequest);
+    ResponseEntity<Response> getConsentsByDoctorID(Integer doctorID);
 }
