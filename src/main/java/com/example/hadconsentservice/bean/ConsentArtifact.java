@@ -37,7 +37,7 @@ public class ConsentArtifact {
         this.consentItems = consentItems;
     }
 
-    @OneToMany(mappedBy = "consentArtifact", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "consentArtifact")
     //@JoinColumn
     private List<ConsentItem> consentItems;
 
