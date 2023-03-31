@@ -37,8 +37,9 @@ public class ConsentArtifact {
         this.consentItems = consentItems;
     }
 
-    @OneToMany
-    private List<ConsentItem> consentItems = new ArrayList<>();
+    @OneToMany(mappedBy = "consentArtifact", fetch = FetchType.LAZY)
+    //@JoinColumn
+    private List<ConsentItem> consentItems;
 
     public Integer getArtifactId() {
         return artifactId;
@@ -95,8 +96,8 @@ public class ConsentArtifact {
                 ", doctorID=" + doctorID +
                 ", patientID=" + patientID +
                 ", timestamp='" + timestamp + '\'' +
-                ", emergency=" + emergency +
                 ", consentItems=" + consentItems +
+                ", emergency=" + emergency +
                 '}';
     }
 }

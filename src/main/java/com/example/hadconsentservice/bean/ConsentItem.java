@@ -30,7 +30,6 @@ public class ConsentItem {
         this.approved = approved;
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.consentArtifact = consentArtifact;
         this.hospitalId = hospitalId;
     }
 
@@ -46,7 +45,6 @@ public class ConsentItem {
                 ", approved=" + approved +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", consentArtifact=" + consentArtifact +
                 ", hospitalId=" + hospitalId +
                 '}';
     }
@@ -54,8 +52,8 @@ public class ConsentItem {
 
     private Date fromDate;
     private Date toDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artifactid", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "artifactID", referencedColumnName = "artifactID")
     private ConsentArtifact consentArtifact;
 
     public ConsentArtifact getConsentArtifact() {

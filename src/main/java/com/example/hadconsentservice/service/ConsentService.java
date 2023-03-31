@@ -19,7 +19,6 @@ public class ConsentService {
     public boolean saveConsentArtifactWithItems(ConsentArtifact consentArtifact) {
         try {
             consentArtifactRepository.save(consentArtifact);
-
             for (ConsentItem consentItem : consentArtifact.getConsentItems()) {
                 consentItem.setConsentArtifact(consentArtifact);
                 consentItemRepository.save(consentItem);
@@ -27,6 +26,7 @@ public class ConsentService {
             return true;
         } catch (Exception e) {
             // handle exception
+            System.out.println(e.getMessage());
             return false;
         }
     }
