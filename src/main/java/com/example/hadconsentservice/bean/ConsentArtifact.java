@@ -1,5 +1,6 @@
 package com.example.hadconsentservice.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ public class ConsentArtifact {
     }
 
     @OneToMany(mappedBy = "consentArtifact")
-    //@JoinColumn
     private List<ConsentItem> consentItems;
 
     public Integer getArtifactId() {

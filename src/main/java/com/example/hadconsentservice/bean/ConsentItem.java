@@ -1,5 +1,6 @@
 package com.example.hadconsentservice.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -53,6 +54,7 @@ public class ConsentItem {
     private Date fromDate;
     private Date toDate;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "artifactID", referencedColumnName = "artifactID")
     private ConsentArtifact consentArtifact;
 
