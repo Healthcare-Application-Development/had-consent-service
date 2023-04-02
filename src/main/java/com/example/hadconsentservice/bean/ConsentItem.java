@@ -1,12 +1,13 @@
 package com.example.hadconsentservice.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "consent_request")
-public class Consent {
+@Table(name = "consent_item")
+public class ConsentItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,8 +21,51 @@ public class Consent {
     private Boolean consentAcknowledged;
 
     private Boolean approved;
+
+    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Integer hospitalId) {
+        this.id = id;
+        this.doctorID = doctorID;
+        this.patientID = patientID;
+        this.consentMessage = consentMessage;
+        this.consentAcknowledged = consentAcknowledged;
+        this.approved = approved;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.hospitalId = hospitalId;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ConsentItem{" +
+                "id=" + id +
+                ", doctorID=" + doctorID +
+                ", patientID=" + patientID +
+                ", consentMessage='" + consentMessage + '\'' +
+                ", consentAcknowledged=" + consentAcknowledged +
+                ", approved=" + approved +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", hospitalId=" + hospitalId +
+                '}';
+    }
+
+
     private Date fromDate;
     private Date toDate;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "artifactID", referencedColumnName = "artifactID")
+    private ConsentArtifact consentArtifact;
+
+    public ConsentArtifact getConsentArtifact() {
+        return consentArtifact;
+    }
+
+    public void setConsentArtifact(ConsentArtifact consentArtifact) {
+        this.consentArtifact = consentArtifact;
+    }
+
     public Integer getHospitalId() {
         return hospitalId;
     }
@@ -40,20 +84,8 @@ public class Consent {
         this.approved = approved;
     }
 
-    public Consent() {
+    public ConsentItem() {
 
-    }
-
-    public Consent(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, Integer hospitalId) {
-        this.id = id;
-        this.doctorID = doctorID;
-        this.patientID = patientID;
-        this.consentMessage = consentMessage;
-        this.consentAcknowledged = consentAcknowledged;
-        this.approved = approved;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
-        this.hospitalId = hospitalId;
     }
 
     public Date getFromDate() {

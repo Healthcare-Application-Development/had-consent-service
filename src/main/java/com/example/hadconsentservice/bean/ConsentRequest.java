@@ -3,6 +3,10 @@ package com.example.hadconsentservice.bean;
 
 public class ConsentRequest {
     private String requestBody;
+    private Integer itemId;
+
+
+
     private Integer doctorId;
     private Integer patientId;
     private Boolean consentAcknowledged;
@@ -13,6 +17,14 @@ public class ConsentRequest {
 
     public String getFromDate() {
         return fromDate;
+    }
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
     public void setFromDate(String fromDate) {
@@ -65,8 +77,9 @@ public class ConsentRequest {
         return patientId;
     }
 
-    public ConsentRequest(String requestBody, Integer doctorId, Integer patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Integer hospitalId) {
+    public ConsentRequest(String requestBody, Integer itemId, Integer doctorId, Integer patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Integer hospitalId) {
         this.requestBody = requestBody;
+        this.itemId = itemId;
         this.doctorId = doctorId;
         this.patientId = patientId;
         this.consentAcknowledged = consentAcknowledged;
