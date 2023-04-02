@@ -33,9 +33,9 @@ public class PatientController {
         return new ResponseEntity<>(new Response(ca, 200), HttpStatus.OK);
     }
 
-    @PutMapping("/updateConsentStatus/{id}")
-    public ResponseEntity<Response> updateConsentStatus(@PathVariable("id") Integer id, @RequestBody ConsentRequest consentRequest) {
-        patientInterface.updateConsentStatus(id, consentRequest);
+    @PutMapping("/updateConsentStatus")
+    public ResponseEntity<Response> updateConsentStatus( @RequestBody ConsentRequest consentRequest) {
+        patientInterface.updateConsentStatus(consentRequest);
         return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
     }
 }
