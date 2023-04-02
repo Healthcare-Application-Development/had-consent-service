@@ -47,7 +47,6 @@ public class DoctorController {
 
     @PostMapping("/store-consent-request")
     public ResponseEntity<String> storeConsentArtifact(@RequestBody ConsentArtifact consentArtifact) {
-        System.out.println(consentArtifact.toString());
         boolean res = consentService.saveConsentArtifactWithItems(consentArtifact);
         if (res != false) {
             return new ResponseEntity<>("Consent artifact saved successfully", HttpStatus.OK);
