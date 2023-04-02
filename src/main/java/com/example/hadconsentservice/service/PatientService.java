@@ -35,24 +35,24 @@ public class PatientService implements PatientInterface {
     }
 
     @Override
-    public ResponseEntity<Response> updateConsentStatus(Integer consentID, ConsentRequest consentRequest) {
-        Optional<ConsentItem> optionalConsent = consentRepository.findById(consentID);
-        ConsentItem consent = null;
-        if (optionalConsent.isPresent())
-            consent = optionalConsent.get();
-        else
-            return null;
-        if (consent.getConsentAcknowledged()) {
-            return null;
+    public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest) {
+        List<ConsentItem> consentItem = consentRepository.findAllById(consentRequest.getItemId());
+
+        for (ConsentItem consent:consentItem) {
+            if (consent.getConsentAcknowledged()) {
+                return null;
+            }
+            consent.setConsentAcknowledged(true);
+            consent.setApproved(consentRequest.getApproved());
+            try {
+                consentRepository.save(consent);
+                return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(new Response(e.getMessage(), 400), HttpStatus.NOT_FOUND);
+            }
         }
-        consent.setConsentAcknowledged(true);
-        consent.setApproved(consentRequest.getApproved());
-        try {
-            consentRepository.save(consent);
-            return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new Response(e.getMessage(), 400), HttpStatus.NOT_FOUND);
-        }
+
+        return new ResponseEntity<>(new Response("internal server error patientService", 400), HttpStatus.NOT_FOUND);
 
     }
 }

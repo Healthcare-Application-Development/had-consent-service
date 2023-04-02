@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ConsentItemRepository extends JpaRepository<ConsentItem, Integer> {
-    List<ConsentItem> findAllByPatientID(Integer patientID);
+    List<ConsentItem> findAllById(Integer patientID);
     List<ConsentItem> findAllByDoctorID(Integer doctorID);
+
+    List<ConsentItem> findAllByPatientID(Integer patientID);
 }
