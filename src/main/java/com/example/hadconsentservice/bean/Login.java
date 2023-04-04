@@ -17,13 +17,16 @@ public class Login {
 
     private String password;
 
-    public Login(Long id, String password, String role) {
+    public Login(Long id, String password, String role, String name) {
         this.id = id;
         this.password = password;
         this.role = role;
+        this.name = name;
     }
 
     private String role;
+
+    private String name;
 
     public Long getId() {
         return id;
@@ -39,6 +42,14 @@ public class Login {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRole() {
