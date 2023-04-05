@@ -22,7 +22,7 @@ public class ConsentItem {
 
     private Boolean approved;
 
-    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Integer hospitalId) {
+    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
@@ -31,7 +31,6 @@ public class ConsentItem {
         this.approved = approved;
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.hospitalId = hospitalId;
     }
 
 
@@ -46,7 +45,6 @@ public class ConsentItem {
                 ", approved=" + approved +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", hospitalId=" + hospitalId +
                 '}';
     }
 
@@ -55,7 +53,7 @@ public class ConsentItem {
     private Date toDate;
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "artifactID", referencedColumnName = "artifactID")
+    @JoinColumn(name = "artifactID", referencedColumnName = "artifactId")
     private ConsentArtifact consentArtifact;
 
     public ConsentArtifact getConsentArtifact() {
@@ -66,15 +64,7 @@ public class ConsentItem {
         this.consentArtifact = consentArtifact;
     }
 
-    public Integer getHospitalId() {
-        return hospitalId;
-    }
 
-    public void setHospitalId(Integer hospitalId) {
-        this.hospitalId = hospitalId;
-    }
-
-    private Integer hospitalId;
 
     public Boolean getApproved() {
         return approved;

@@ -26,15 +26,32 @@ public class ConsentArtifact {
 
     private boolean emergency;
 
+    private Boolean consentAcknowledged;
+
+    private Boolean approved;
+    private Boolean ongoing;
+
+    public Boolean getOngoing() {
+        return ongoing;
+    }
+
+    public void setOngoing(Boolean ongoing) {
+        this.ongoing = ongoing;
+    }
+
     public ConsentArtifact() {
     }
 
-    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, String timestamp, boolean emergency, List<ConsentItem> consentItems) {
+
+    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, String timestamp, boolean emergency, Boolean consentAcknowledged, Boolean approved, Boolean ongoing, List<ConsentItem> consentItems) {
         this.artifactId = artifactId;
         this.doctorID = doctorID;
         this.patientID = patientID;
         this.timestamp = timestamp;
         this.emergency = emergency;
+        this.consentAcknowledged = consentAcknowledged;
+        this.approved = approved;
+        this.ongoing = ongoing;
         this.consentItems = consentItems;
     }
 
@@ -87,6 +104,22 @@ public class ConsentArtifact {
 
     public List<ConsentItem> getConsentItems() {
         return Collections.unmodifiableList(consentItems);
+    }
+
+    public Boolean getConsentAcknowledged() {
+        return consentAcknowledged;
+    }
+
+    public void setConsentAcknowledged(Boolean consentAcknowledged) {
+        this.consentAcknowledged = consentAcknowledged;
+    }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/patient")
 public class PatientController {
     final PatientInterface patientInterface;
@@ -28,14 +28,19 @@ public class PatientController {
 
     @GetMapping("/getAllConsents/{id}")
     public ResponseEntity<Response> findAllByPatientID(@PathVariable String id) {
-        System.out.println("id : "+Integer.valueOf(id));
         List<ConsentArtifact> ca = consentArtifactService.findAllByPatientID(Integer.valueOf(id));
         return new ResponseEntity<>(new Response(ca, 200), HttpStatus.OK);
     }
 
+    @PutMapping("/updateConsentItemStatus")
+    public ResponseEntity<Response> updateConsentItemStatus( @RequestBody ConsentRequest consentRequest) {
+        patientInterface.updateConsentStatus(consentRequest);
+        return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
+    }
+
     @PutMapping("/updateConsentStatus")
     public ResponseEntity<Response> updateConsentStatus( @RequestBody ConsentRequest consentRequest) {
-        patientInterface.updateConsentStatus(consentRequest);
+        consentArtifactService.updateConsentStatus(consentRequest);
         return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
     }
 }
