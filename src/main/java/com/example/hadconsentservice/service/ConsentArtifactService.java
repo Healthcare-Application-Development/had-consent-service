@@ -23,11 +23,14 @@ public class ConsentArtifactService {
         return consentArtifactRepository.findAllByPatientID(patientID);
     }
 
-    public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID) {
         ConsentArtifact consentArtifact = consentArtifactRepository.findById(consentRequest.getItemId()).get();
 
         if (consentArtifact == null) {
             return new ResponseEntity<>(new Response("internal server error patientService", 400), HttpStatus.NOT_FOUND);
+        }
+        if (!consentArtifact.getPatientID().equals(Integer.valueOf(patientID))) {
+            return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         consentArtifact.setConsentAcknowledged(consentRequest.getConsentAcknowledged());
         consentArtifact.setApproved(consentRequest.getApproved());

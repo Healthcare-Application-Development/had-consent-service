@@ -3,15 +3,13 @@ package com.example.hadconsentservice.security;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -25,7 +23,8 @@ public class TokenManager implements Serializable {
 
     private Algorithm hmac512;
     private  JWTVerifier verifier;
-
+    @Value("${secret}")
+    String secret;
     public TokenManager(@Value("${secret}") final String secret) {
         this.hmac512 = Algorithm.HMAC512(secret);
         this.verifier = JWT.require(this.hmac512).build();
@@ -41,12 +40,14 @@ public class TokenManager implements Serializable {
                 .sign(this.hmac512);
     }
 
-    public String validateTokenAndGetUsername(final String token) {
-        try {
-            return verifier.verify(token).getSubject();
-        } catch (final JWTVerificationException verificationEx) {
-            System.out.println("token invalid: "+ verificationEx.getMessage());
-            return null;
-        }
+    public boolean validateTokenAndGetUsername(final String token, UserDetails userDetails) {
+        String username = getUsernameFromToken(token);
+        Claims claims = Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+        Boolean isTokenExpired = claims.getExpiration().before(new Date());
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired);
+    }
+    public String getUsernameFromToken(String token) {
+        final Claims claims = Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+        return claims.getSubject();
     }
 }

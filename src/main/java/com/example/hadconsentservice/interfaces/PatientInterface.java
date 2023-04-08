@@ -6,6 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface PatientInterface {
     ResponseEntity<Response> getAllConsentsByID(Integer id);
-    ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest);
+    ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID);
 
 }
