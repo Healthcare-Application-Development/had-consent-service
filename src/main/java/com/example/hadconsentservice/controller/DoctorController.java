@@ -71,6 +71,7 @@ public class DoctorController {
                     consent.setConsentMessage(req.getRequestBody());
                     consent.setConsentAcknowledged(false);
                     consent.setApproved(false);
+                    consent.setOngoing(req.getOngoing());
                     try {
                         consent.setFromDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getFromDate()));
                     } catch (ParseException e) {
