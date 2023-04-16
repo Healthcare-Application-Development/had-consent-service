@@ -22,7 +22,9 @@ public class ConsentItem {
 
     private Boolean approved;
 
-    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact) {
+    private Boolean ongoing;
+
+    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Boolean ongoing) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
@@ -31,9 +33,16 @@ public class ConsentItem {
         this.approved = approved;
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.ongoing = ongoing;
     }
 
+    public void setOngoing(Boolean ongoing) {
+        this.ongoing = ongoing;
+    }
 
+    public Boolean getOngoing() {
+        return ongoing;
+    }
     @Override
     public String toString() {
         return "ConsentItem{" +

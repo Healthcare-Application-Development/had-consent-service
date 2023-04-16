@@ -49,6 +49,7 @@ public class PatientService implements PatientInterface {
             }
             consent.setConsentAcknowledged(true);
             consent.setApproved(consentRequest.getApproved());
+            consent.setOngoing(consentRequest.getOngoing());
             try {
                 consentRepository.save(consent);
                 return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
