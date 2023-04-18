@@ -48,6 +48,9 @@ public class ConsentItem {
         this.revoked = revoked;
     }
 
+    public Boolean getOngoing() {
+        return ongoing;
+    }
     @Override
     public String toString() {
         return "ConsentItem{" +
@@ -69,7 +72,7 @@ public class ConsentItem {
     private Date toDate;
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "artifactID", referencedColumnName = "artifactID")
+    @JoinColumn(name = "artifactID", referencedColumnName = "artifactId")
     private ConsentArtifact consentArtifact;
 
     public ConsentArtifact getConsentArtifact() {
@@ -80,15 +83,7 @@ public class ConsentItem {
         this.consentArtifact = consentArtifact;
     }
 
-    public Integer getHospitalId() {
-        return hospitalId;
-    }
 
-    public void setHospitalId(Integer hospitalId) {
-        this.hospitalId = hospitalId;
-    }
-
-    private Integer hospitalId;
 
     public Boolean getApproved() {
         return approved;

@@ -7,6 +7,8 @@ import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.DoctorInterface;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
 import com.example.hadconsentservice.repository.ConsentItemRepository;
+import com.example.hadconsentservice.security.JWTFilter;
+import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.ConsentService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class DoctorController {
     private ConsentService consentService;
 
     final DoctorInterface doctorInterface;
+
+    @Autowired
+    TokenManager tokenManager;
 
     public DoctorController(DoctorInterface doctorInterface) {
         this.doctorInterface = doctorInterface;
@@ -66,7 +71,7 @@ public class DoctorController {
                     consent.setConsentMessage(req.getRequestBody());
                     consent.setConsentAcknowledged(false);
                     consent.setApproved(false);
-                    consent.setHospitalId(req.getHospitalId());
+                    consent.setOngoing(req.getOngoing());
                     try {
                         consent.setFromDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getFromDate()));
                     } catch (ParseException e) {
@@ -91,7 +96,12 @@ public class DoctorController {
     }
 
     @GetMapping("/getAllConsents")
-    public ResponseEntity<Response> getConsentsByDoctorID(@PathParam("id") Integer id) {
+    public ResponseEntity<Response> getConsentsByDoctorID(@RequestHeader("Authorization") String authorization, @PathParam("id") Integer id) {
+        String token = authorization.substring(7);
+        String username = tokenManager.getUsernameFromToken(token);
+        if (!username.equals(String.valueOf(id))) {
+            return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
+        }
         return doctorInterface.getConsentsByDoctorID(id);
     }
 }

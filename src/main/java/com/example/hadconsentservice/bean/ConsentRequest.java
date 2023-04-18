@@ -14,6 +14,15 @@ public class ConsentRequest {
     private String toDate;
 
     private Boolean approved;
+    private Boolean ongoing;
+
+    public Boolean getOngoing() {
+        return ongoing;
+    }
+
+    public void setOngoing(Boolean ongoing) {
+        this.ongoing = ongoing;
+    }
 
     public String getFromDate() {
         return fromDate;
@@ -77,7 +86,7 @@ public class ConsentRequest {
         return patientId;
     }
 
-    public ConsentRequest(String requestBody, Integer itemId, Integer doctorId, Integer patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Integer hospitalId) {
+    public ConsentRequest(String requestBody, Integer itemId, Integer doctorId, Integer patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Boolean ongoing, Integer hospitalId) {
         this.requestBody = requestBody;
         this.itemId = itemId;
         this.doctorId = doctorId;
@@ -86,6 +95,7 @@ public class ConsentRequest {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.approved = approved;
+        this.ongoing = ongoing;
         this.hospitalId = hospitalId;
     }
 

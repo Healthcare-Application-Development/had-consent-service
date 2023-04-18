@@ -35,15 +35,21 @@ public class PatientService implements PatientInterface {
     }
 
     @Override
-    public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID) {
         List<ConsentItem> consentItem = consentRepository.findAllById(consentRequest.getItemId());
-
+        if (!consentRequest.getPatientId().equals(Integer.valueOf(patientID))) {
+            return new ResponseEntity<>(new Response("Authorization failed", 403), HttpStatus.FORBIDDEN);
+        }
         for (ConsentItem consent:consentItem) {
+            if (!consent.getPatientID().equals(Integer.valueOf(patientID))) {
+                return new ResponseEntity<>(new Response("Authorization failed", 403), HttpStatus.FORBIDDEN);
+            }
             if (consent.getConsentAcknowledged()) {
-                return null;
+                return new ResponseEntity<>(new Response("Consent Already Acknowledged", 404), HttpStatus.NOT_FOUND);
             }
             consent.setConsentAcknowledged(true);
             consent.setApproved(consentRequest.getApproved());
+            consent.setOngoing(consentRequest.getOngoing());
             try {
                 consentRepository.save(consent);
                 return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
@@ -52,7 +58,7 @@ public class PatientService implements PatientInterface {
             }
         }
 
-        return new ResponseEntity<>(new Response("internal server error patientService", 400), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new Response("Unable to find patient records", 400), HttpStatus.NOT_FOUND);
 
     }
 
