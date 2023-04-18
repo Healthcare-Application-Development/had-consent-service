@@ -22,18 +22,31 @@ public class ConsentItem {
 
     private Boolean approved;
 
-    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Integer hospitalId) {
+    @Column(columnDefinition = "boolean default false")
+    private boolean revoked;
+
+
+    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, boolean revoked, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Integer hospitalId) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
         this.consentMessage = consentMessage;
         this.consentAcknowledged = consentAcknowledged;
         this.approved = approved;
+        this.revoked = revoked;
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.consentArtifact = consentArtifact;
         this.hospitalId = hospitalId;
     }
 
+    public boolean isRevoked() {
+        return revoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
 
     @Override
     public String toString() {
@@ -44,12 +57,13 @@ public class ConsentItem {
                 ", consentMessage='" + consentMessage + '\'' +
                 ", consentAcknowledged=" + consentAcknowledged +
                 ", approved=" + approved +
+                ", revoked=" + revoked +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
+                ", consentArtifact=" + consentArtifact +
                 ", hospitalId=" + hospitalId +
                 '}';
     }
-
 
     private Date fromDate;
     private Date toDate;

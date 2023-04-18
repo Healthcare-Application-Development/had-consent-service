@@ -6,6 +6,7 @@ import com.example.hadconsentservice.bean.ConsentRequest;
 import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.PatientInterface;
 import com.example.hadconsentservice.service.ConsentArtifactService;
+import com.example.hadconsentservice.service.ConsentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class PatientController {
 
     @Autowired
     private ConsentArtifactService consentArtifactService;
+    @Autowired
+    private ConsentService consentService;
 
     @GetMapping("/getAllConsents/{id}")
     public ResponseEntity<Response> findAllByPatientID(@PathVariable String id) {
@@ -38,4 +41,14 @@ public class PatientController {
         patientInterface.updateConsentStatus(consentRequest);
         return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
     }
+    @PostMapping("/consent-artifacts/revoke")
+    public ConsentArtifact revokeConsentArtifact(@RequestParam Integer artifactId) {
+        return consentArtifactService.revokeConsentArtifact(artifactId);
+    }
+
+    @PostMapping("/consent-item/revoke")
+    public ConsentItem revokeConsentArtifactitem(@RequestParam Integer Id) {
+        return consentService.revokeConsentArtifactitem(Id);
+    }
+
 }

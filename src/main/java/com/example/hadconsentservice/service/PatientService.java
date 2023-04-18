@@ -55,4 +55,5 @@ public class PatientService implements PatientInterface {
         return new ResponseEntity<>(new Response("internal server error patientService", 400), HttpStatus.NOT_FOUND);
 
     }
+
 }

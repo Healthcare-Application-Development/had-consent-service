@@ -1,9 +1,7 @@
 package com.example.hadconsentservice.bean;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 @Entity
@@ -26,17 +24,24 @@ public class ConsentArtifact {
 
     private boolean emergency;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean revoked;
+
     public ConsentArtifact() {
     }
 
-    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, String timestamp, boolean emergency, List<ConsentItem> consentItems) {
+
+    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, String timestamp, boolean emergency, boolean revoked, List<ConsentItem> consentItems) {
         this.artifactId = artifactId;
         this.doctorID = doctorID;
         this.patientID = patientID;
         this.timestamp = timestamp;
         this.emergency = emergency;
+        this.revoked = revoked;
         this.consentItems = consentItems;
     }
+
+
 
     @OneToMany(mappedBy = "consentArtifact")
     private List<ConsentItem> consentItems;
@@ -81,6 +86,14 @@ public class ConsentArtifact {
         this.emergency = emergency;
     }
 
+    public boolean getRevoked() {
+        return revoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
+
     public void setConsentItems(List<ConsentItem> consentItems) {
         this.consentItems = consentItems;
     }
@@ -89,6 +102,8 @@ public class ConsentArtifact {
         return Collections.unmodifiableList(consentItems);
     }
 
+
+
     @Override
     public String toString() {
         return "ConsentArtifact{" +
@@ -96,8 +111,9 @@ public class ConsentArtifact {
                 ", doctorID=" + doctorID +
                 ", patientID=" + patientID +
                 ", timestamp='" + timestamp + '\'' +
-                ", consentItems=" + consentItems +
                 ", emergency=" + emergency +
+                ", revoked=" + revoked +
+                ", consentItems=" + consentItems +
                 '}';
     }
 }

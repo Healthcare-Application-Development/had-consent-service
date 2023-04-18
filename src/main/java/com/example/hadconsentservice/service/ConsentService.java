@@ -31,4 +31,17 @@ public class ConsentService {
         }
     }
 
+
+    public ConsentItem revokeConsentArtifactitem(Integer Id) {
+        ConsentItem consentitem = consentItemRepository.findById(Id)
+                .orElseThrow(() -> new IllegalArgumentException("ConsentArtifact not found with artifactId: " + Id));
+
+        consentitem.setRevoked(true);
+        consentItemRepository.save(consentitem);
+
+        return consentitem;
+    }
+
+
+
 }
