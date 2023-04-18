@@ -82,7 +82,7 @@ public class PatientController {
 
     @PostMapping("/consent-item/revoke")
     public ConsentItem revokeConsentArtifactitem(@RequestParam Integer Id) {
-        return consentService.revokeConsentArtifactitem(Id);
+        return consentService.revokeConsentArtifactItem(Id);
     }
 
 }

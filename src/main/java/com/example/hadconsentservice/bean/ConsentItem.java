@@ -26,7 +26,9 @@ public class ConsentItem {
     private boolean revoked;
 
 
-    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, boolean revoked, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Integer hospitalId) {
+    private Boolean ongoing;
+
+    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Boolean ongoing,boolean revoked,Integer hospitalId) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
@@ -37,7 +39,7 @@ public class ConsentItem {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.consentArtifact = consentArtifact;
-        this.hospitalId = hospitalId;
+
     }
 
     public boolean isRevoked() {
@@ -63,8 +65,6 @@ public class ConsentItem {
                 ", revoked=" + revoked +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", consentArtifact=" + consentArtifact +
-                ", hospitalId=" + hospitalId +
                 '}';
     }
 

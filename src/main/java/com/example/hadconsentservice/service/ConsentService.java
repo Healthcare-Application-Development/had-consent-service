@@ -32,7 +32,7 @@ public class ConsentService {
     }
 
 
-    public ConsentItem revokeConsentArtifactitem(Integer Id) {
+    public ConsentItem revokeConsentArtifactItem(Integer Id) {
         ConsentItem consentitem = consentItemRepository.findById(Id)
                 .orElseThrow(() -> new IllegalArgumentException("ConsentArtifact not found with artifactId: " + Id));
 

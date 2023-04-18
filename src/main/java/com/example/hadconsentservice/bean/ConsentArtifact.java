@@ -24,18 +24,33 @@ public class ConsentArtifact {
 
     @Column(columnDefinition = "boolean default false")
     private boolean revoked;
+    private Boolean consentAcknowledged;
+
+    private Boolean approved;
+    private Boolean ongoing;
+
+    public Boolean getOngoing() {
+        return ongoing;
+    }
+
+    public void setOngoing(Boolean ongoing) {
+        this.ongoing = ongoing;
+    }
 
     public ConsentArtifact() {
     }
 
 
-    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, Date timestamp, boolean emergency, Boolean consentAcknowledged, Boolean approved, Boolean ongoing, List<ConsentItem> consentItems, boolean revoked) {
+    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, Date timestamp, boolean emergency, Boolean consentAcknowledged, Boolean approved, Boolean ongoing, List<ConsentItem> consentItems,boolean revoked) {
         this.artifactId = artifactId;
         this.doctorID = doctorID;
         this.patientID = patientID;
         this.timestamp = timestamp;
         this.emergency = emergency;
         this.revoked = revoked;
+        this.consentAcknowledged = consentAcknowledged;
+        this.approved = approved;
+        this.ongoing = ongoing;
         this.consentItems = consentItems;
     }
 
