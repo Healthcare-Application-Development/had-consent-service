@@ -18,7 +18,7 @@ public class ConsentArtifactService {
     @Autowired
     private ConsentArtifactRepository consentArtifactRepository;
 
-    public List<ConsentArtifact> findAllByPatientID(Integer patientID) {
+    public List<ConsentArtifact> findAllByPatientID(String patientID) {
         return consentArtifactRepository.findAllByPatientID(patientID);
     }
 
@@ -40,12 +40,17 @@ public class ConsentArtifactService {
         if (consentArtifact == null) {
             return new ResponseEntity<>(new Response("internal server error patientService", 400), HttpStatus.NOT_FOUND);
         }
-        if (!consentArtifact.getPatientID().equals(Integer.valueOf(patientID))) {
+        if (!consentArtifact.getPatientID().equals(patientID)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
-        consentArtifact.setConsentAcknowledged(consentRequest.getConsentAcknowledged());
-        consentArtifact.setApproved(consentRequest.getApproved());
-        consentArtifact.setOngoing(consentRequest.getOngoing());
+        if (consentRequest.getConsentAcknowledged() != null)
+            consentArtifact.setConsentAcknowledged(consentRequest.getConsentAcknowledged());
+        if (consentRequest.getApproved() != null)
+            consentArtifact.setApproved(consentRequest.getApproved());
+        if (consentRequest.getOngoing() != null)
+            consentArtifact.setOngoing(consentRequest.getOngoing());
+        // if (consentRequest.getIsDelegated() != null) 
+        //     consentArtifact.setIsDelegated(consentRequest.getIsDelegated());
         consentArtifactRepository.save(consentArtifact);
         return new ResponseEntity<>(new Response(consentArtifact, 200), HttpStatus.OK);
     }

@@ -3,18 +3,18 @@ package com.example.hadconsentservice.bean;
 import java.util.Date;
 
 public class PatientHealthRecord {
-    public PatientHealthRecord(Integer abhaId, String recordType, Date timestamp, String hospitalName) {
+    public PatientHealthRecord(String abhaId, String recordType, Date timestamp, String hospitalName) {
         this.abhaId = abhaId;
         this.recordType = recordType;
         this.timestamp=timestamp;
         this.hospitalName=hospitalName;
     }
     public PatientHealthRecord(){}
-    private Integer abhaId;
+    private String abhaId;
     String recordType;
     Date timestamp;
     String hospitalName;
-
+    String description;
     public Date getTimestamp() {
         return timestamp;
     }
@@ -31,11 +31,16 @@ public class PatientHealthRecord {
         this.hospitalName = hospitalName;
     }
 
-    public Integer getAbhaId() {
+    public String getAbhaId() {
         return abhaId;
+    } 
+    public String getDescription() {
+        return description;
     }
-
-    public void setAbhaId(Integer abhaId) {
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public void setAbhaId(String abhaId) {
         this.abhaId = abhaId;
     }
 

@@ -7,8 +7,8 @@ public class ConsentRequest {
 
 
 
-    private Integer doctorId;
-    private Integer patientId;
+    private String doctorId;
+    private String patientId;
     private Boolean consentAcknowledged;
     private String fromDate;
     private String toDate;
@@ -58,6 +58,10 @@ public class ConsentRequest {
 
     private Integer hospitalId;
 
+    private Boolean isDelegated;
+    
+    private Boolean delegationApproved;
+
     public Boolean getApproved() {
         return approved;
     }
@@ -74,19 +78,19 @@ public class ConsentRequest {
     public void setConsentAcknowledged(Boolean consentAcknowledged) {
         this.consentAcknowledged = consentAcknowledged;
     }
-    public Integer getDoctorId() {
+    public String getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(Integer doctorId) {
+    public void setDoctorId(String doctorId) {
         this.doctorId = doctorId;
     }
 
-    public Integer getPatientId() {
+    public String getPatientId() {
         return patientId;
     }
 
-    public ConsentRequest(String requestBody, Integer itemId, Integer doctorId, Integer patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Boolean ongoing, Integer hospitalId) {
+    public ConsentRequest(String requestBody, Integer itemId, String doctorId, String patientId, Boolean consentAcknowledged, String fromDate, String toDate, Boolean approved, Boolean ongoing, Integer hospitalId) {
         this.requestBody = requestBody;
         this.itemId = itemId;
         this.doctorId = doctorId;
@@ -99,7 +103,7 @@ public class ConsentRequest {
         this.hospitalId = hospitalId;
     }
 
-    public void setPatientId(Integer patientId) {
+    public void setPatientId(String patientId) {
         this.patientId = patientId;
     }
 
@@ -113,5 +117,21 @@ public class ConsentRequest {
 
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
+    }
+
+    public Boolean getIsDelegated() {
+        return isDelegated;
+    }
+
+    public void setIsDelegated(Boolean isDelegated) {
+        this.isDelegated = isDelegated;
+    }
+
+    public Boolean getDelegationApproved() {
+        return delegationApproved;
+    }
+
+    public void setDelegationApproved(Boolean delegationApproved) {
+        this.delegationApproved = delegationApproved;
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ConsentItemRepository extends JpaRepository<ConsentItem, Integer> {
     List<ConsentItem> findAllById(Integer patientID);
-    List<ConsentItem> findAllByDoctorID(Integer doctorID);
+    List<ConsentItem> findAllByDoctorID(String doctorID);
 
-    List<ConsentItem> findAllByPatientID(Integer patientID);
+    List<ConsentItem> findAllByPatientID(String patientID);
 }

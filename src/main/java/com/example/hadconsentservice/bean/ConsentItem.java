@@ -12,9 +12,9 @@ public class ConsentItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer doctorID;
+    private String doctorID;
 
-    private Integer patientID;
+    private String patientID;
 
     private String consentMessage;
 
@@ -28,7 +28,7 @@ public class ConsentItem {
 
     private Boolean ongoing;
 
-    public ConsentItem(Integer id, Integer doctorID, Integer patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Boolean ongoing,boolean revoked,Integer hospitalId) {
+    public ConsentItem(Integer id, String doctorID, String patientID, String consentMessage, Boolean consentAcknowledged, Boolean approved, Date fromDate, Date toDate, ConsentArtifact consentArtifact, Boolean ongoing,boolean revoked,Integer hospitalId) {
         this.id = id;
         this.doctorID = doctorID;
         this.patientID = patientID;
@@ -78,7 +78,29 @@ public class ConsentItem {
     @JsonIgnore
     @JoinColumn(name = "artifactID", referencedColumnName = "artifactId")
     private ConsentArtifact consentArtifact;
+    
+    @Transient
+    private String artifactID;
+    
+    public String getArtifactID() {
+        return artifactID;
+    }
 
+    public void setArtifactID(String artifactID) {
+        this.artifactID = artifactID;
+    }
+
+    public Boolean getIsDelegated() {
+        return isDelegated;
+    }
+
+    public void setIsDelegated(Boolean isDelegated) {
+        this.isDelegated = isDelegated;
+    }
+    private Boolean delegationRequired;
+
+    private Boolean isDelegated;
+    
     public ConsentArtifact getConsentArtifact() {
         return consentArtifact;
     }
@@ -125,19 +147,19 @@ public class ConsentItem {
         this.id = id;
     }
 
-    public Integer getDoctorID() {
+    public String getDoctorID() {
         return doctorID;
     }
 
-    public void setDoctorID(Integer doctorID) {
+    public void setDoctorID(String doctorID) {
         this.doctorID = doctorID;
     }
 
-    public Integer getPatientID() {
+    public String getPatientID() {
         return patientID;
     }
 
-    public void setPatientID(Integer patientID) {
+    public void setPatientID(String patientID) {
         this.patientID = patientID;
     }
 
@@ -156,4 +178,13 @@ public class ConsentItem {
     public void setConsentAcknowledged(Boolean consentAcknowledged) {
         this.consentAcknowledged = consentAcknowledged;
     }
+
+    public Boolean getDelegationRequired() {
+        return delegationRequired;
+    }
+
+    public void setDelegationRequired(Boolean delegationRequired) {
+        this.delegationRequired = delegationRequired;
+    }
+    
 }

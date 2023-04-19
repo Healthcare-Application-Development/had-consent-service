@@ -39,16 +39,16 @@ public class PatientController {
         if (!username.equals(String.valueOf(id))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
-        List<ConsentArtifact> ca = consentArtifactService.findAllByPatientID(Integer.valueOf(id));
+        List<ConsentArtifact> ca = consentArtifactService.findAllByPatientID(id);
         return new ResponseEntity<>(new Response(ca, 200), HttpStatus.OK);
     }
 
     @PutMapping("/updateConsentItemStatus")
     public ResponseEntity<Response> updateConsentItemStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) {
-        Integer patientID = consentRequest.getPatientId();
+        String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        if (!username.equals(String.valueOf(patientID))) {
+        if (!username.equals(patientID)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         ResponseEntity<Response> res = patientInterface.updateConsentStatus(consentRequest, String.valueOf(patientID));
@@ -63,7 +63,7 @@ public class PatientController {
 
     @PutMapping("/updateConsentStatus")
     public ResponseEntity<Response> updateConsentStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) {
-        Integer patientID = consentRequest.getPatientId();
+        String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
         if (!username.equals(String.valueOf(patientID))) {

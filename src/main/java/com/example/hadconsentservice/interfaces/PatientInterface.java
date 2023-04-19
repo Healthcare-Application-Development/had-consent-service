@@ -5,7 +5,7 @@ import com.example.hadconsentservice.bean.Response;
 import org.springframework.http.ResponseEntity;
 
 public interface PatientInterface {
-    ResponseEntity<Response> getAllConsentsByID(Integer id);
+    ResponseEntity<Response> getAllConsentsByID(String id);
     ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID);
 
 

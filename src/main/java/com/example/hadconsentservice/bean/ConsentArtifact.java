@@ -14,9 +14,9 @@ public class ConsentArtifact {
     private Integer artifactId;
 
 
-    private Integer doctorID;
+    private String doctorID;
 
-    private Integer patientID;
+    private String patientID;
 
     private Date timestamp;
 
@@ -24,9 +24,9 @@ public class ConsentArtifact {
 
     @Column(columnDefinition = "boolean default false")
     private boolean revoked;
-    private Boolean consentAcknowledged;
+    private Boolean consentAcknowledged = false;
 
-    private Boolean approved;
+    private Boolean approved = false;
     private Boolean ongoing;
 
     public Boolean getOngoing() {
@@ -41,7 +41,7 @@ public class ConsentArtifact {
     }
 
 
-    public ConsentArtifact(Integer artifactId, Integer doctorID, Integer patientID, Date timestamp, boolean emergency, Boolean consentAcknowledged, Boolean approved, Boolean ongoing, List<ConsentItem> consentItems,boolean revoked) {
+    public ConsentArtifact(Integer artifactId, String doctorID, String patientID, Date timestamp, boolean emergency, Boolean consentAcknowledged, Boolean approved, Boolean ongoing, List<ConsentItem> consentItems,boolean revoked) {
         this.artifactId = artifactId;
         this.doctorID = doctorID;
         this.patientID = patientID;
@@ -67,19 +67,19 @@ public class ConsentArtifact {
         this.artifactId = artifactId;
     }
 
-    public Integer getDoctorID() {
+    public String getDoctorID() {
         return doctorID;
     }
 
-    public void setDoctorID(Integer doctorID) {
+    public void setDoctorID(String doctorID) {
         this.doctorID = doctorID;
     }
 
-    public Integer getPatientID() {
+    public String getPatientID() {
         return patientID;
     }
 
-    public void setPatientID(Integer patientID) {
+    public void setPatientID(String patientID) {
         this.patientID = patientID;
     }
 

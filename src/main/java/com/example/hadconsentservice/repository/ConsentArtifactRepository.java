@@ -9,8 +9,5 @@ import java.util.List;
 @Repository
 public interface ConsentArtifactRepository extends JpaRepository<ConsentArtifact, Integer> {
 
-
-
-
-    List<ConsentArtifact> findAllByPatientID(Integer patientID);
+    List<ConsentArtifact> findAllByPatientID(String patientID);
 }

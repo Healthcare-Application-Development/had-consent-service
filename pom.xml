@@ -79,6 +79,13 @@
 			<artifactId>jaxb-api</artifactId>
 			<version>2.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-vault-config -->
+		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-vault-config</artifactId>
+		    <version>4.0.1</version>
+		</dependency>
+
 
 
 <!--		&lt;!&ndash; Runtime, com.sun.xml.bind module &ndash;&gt;-->

@@ -22,7 +22,7 @@ public class PatientService implements PatientInterface {
     }
 
     @Override
-    public ResponseEntity<Response> getAllConsentsByID(Integer patientID) {
+    public ResponseEntity<Response> getAllConsentsByID(String patientID) {
         List<ConsentItem> consentList = consentRepository.findAllByPatientID(patientID);
         List<ConsentItem> updatedConsentList = new ArrayList<>();
 
@@ -37,11 +37,11 @@ public class PatientService implements PatientInterface {
     @Override
     public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID) {
         List<ConsentItem> consentItem = consentRepository.findAllById(consentRequest.getItemId());
-        if (!consentRequest.getPatientId().equals(Integer.valueOf(patientID))) {
+        if (!consentRequest.getPatientId().equals((patientID))) {
             return new ResponseEntity<>(new Response("Authorization failed", 403), HttpStatus.FORBIDDEN);
         }
         for (ConsentItem consent:consentItem) {
-            if (!consent.getPatientID().equals(Integer.valueOf(patientID))) {
+            if (!consent.getPatientID().equals((patientID))) {
                 return new ResponseEntity<>(new Response("Authorization failed", 403), HttpStatus.FORBIDDEN);
             }
             if (consent.getConsentAcknowledged()) {
@@ -50,6 +50,7 @@ public class PatientService implements PatientInterface {
             consent.setConsentAcknowledged(true);
             consent.setApproved(consentRequest.getApproved());
             consent.setOngoing(consentRequest.getOngoing());
+            consent.setIsDelegated(consentRequest.getIsDelegated());
             try {
                 consentRepository.save(consent);
                 return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);

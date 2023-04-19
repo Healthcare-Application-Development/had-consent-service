@@ -48,7 +48,7 @@ public class AuthController {
         ResponseEntity<Response> responseEntity = loginInterface.authenticate(login.getId(), login.getPassword(), login.getRole());
         authenticationResponse.setAccessToken(tokenManager.generateToken(userDetails));
 
-        authenticationResponse.setId(login.getId());
+        authenticationResponse.setId(String.valueOf(login.getId()));
         authenticationResponse.setName(login.getName());
         authenticationResponse.setRole(login.getRole());
         ObjectMapper objectMapper = new ObjectMapper();
