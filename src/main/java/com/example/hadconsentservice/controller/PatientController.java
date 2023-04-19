@@ -7,6 +7,7 @@ import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.PatientInterface;
 import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.ConsentArtifactService;
+import com.example.hadconsentservice.service.ConsentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,8 @@ public class PatientController {
     TokenManager tokenManager;
     @Autowired
     private ConsentArtifactService consentArtifactService;
+    @Autowired
+    private ConsentService consentService;
 
     @GetMapping("/getAllConsents/{id}")
     public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathVariable String id) {
@@ -72,4 +75,14 @@ public class PatientController {
         }
         return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
     }
+    @PostMapping("/consent-artifacts/revoke")
+    public ConsentArtifact revokeConsentArtifact(@RequestParam Integer artifactId) {
+        return consentArtifactService.revokeConsentArtifact(artifactId);
+    }
+
+    @PostMapping("/consent-item/revoke")
+    public ConsentItem revokeConsentArtifactitem(@RequestParam Integer Id) {
+        return consentService.revokeConsentArtifactItem(Id);
+    }
+
 }

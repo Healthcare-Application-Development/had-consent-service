@@ -11,4 +11,4 @@ insert into login(id,name,password,role) VALUES
 -- 1- abcd
 -- 2- abc
 -- 3- efgh
--- 4- efg    
+-- 4- efg

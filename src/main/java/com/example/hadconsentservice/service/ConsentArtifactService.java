@@ -5,7 +5,6 @@ import com.example.hadconsentservice.bean.ConsentItem;
 import com.example.hadconsentservice.bean.ConsentRequest;
 import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
-import com.example.hadconsentservice.repository.ConsentItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,18 @@ public class ConsentArtifactService {
     public List<ConsentArtifact> findAllByPatientID(Integer patientID) {
         return consentArtifactRepository.findAllByPatientID(patientID);
     }
+
+
+    public ConsentArtifact revokeConsentArtifact(Integer artifactId) {
+        ConsentArtifact consentArtifact = consentArtifactRepository.findById(artifactId)
+                .orElseThrow(() -> new IllegalArgumentException("ConsentArtifact not found with artifactId: " + artifactId));
+
+        consentArtifact.setRevoked(true);
+        consentArtifactRepository.save(consentArtifact);
+
+        return consentArtifact;
+    }
+
 
     public ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID) {
         ConsentArtifact consentArtifact = consentArtifactRepository.findById(consentRequest.getItemId()).get();
