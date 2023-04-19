@@ -8,4 +8,8 @@ public interface PatientInterface {
     ResponseEntity<Response> getAllConsentsByID(String id);
     ResponseEntity<Response> updateConsentStatus(ConsentRequest consentRequest, String patientID);
 
+
+
+
+
 }
