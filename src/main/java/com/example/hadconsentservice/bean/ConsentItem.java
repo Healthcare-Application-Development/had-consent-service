@@ -44,6 +44,7 @@ public class ConsentItem {
     }
      public void setOngoing(Boolean ongoing) {
         this.ongoing = ongoing;
+        }
 
     public boolean isRevoked() {
         return revoked;
