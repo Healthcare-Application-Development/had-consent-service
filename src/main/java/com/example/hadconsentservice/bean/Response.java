@@ -3,7 +3,9 @@ package com.example.hadconsentservice.bean;
 public class Response {
     Object object;
     Integer status;
-
+    public Response () {
+        
+    }
     public Response(Object object, Integer status) {
         this.object = object;
         this.status = status;

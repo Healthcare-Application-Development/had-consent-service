@@ -68,7 +68,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/", "/authenticate").permitAll()
                 .requestMatchers("/doctor/**").hasAnyAuthority("ROLE_Doctor")
                 .requestMatchers("/patient/**").hasAnyAuthority("ROLE_Patient")
-                .requestMatchers("/mediatorServiceRequestController/**").permitAll()
+                .requestMatchers("/mediatorServiceRequestController/**").hasAnyAuthority("ROLE_Doctor")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
