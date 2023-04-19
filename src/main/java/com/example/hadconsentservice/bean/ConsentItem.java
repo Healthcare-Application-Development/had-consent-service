@@ -39,8 +39,11 @@ public class ConsentItem {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.consentArtifact = consentArtifact;
+        this.ongoing= ongoing;
 
     }
+     public void setOngoing(Boolean ongoing) {
+        this.ongoing = ongoing;
 
     public boolean isRevoked() {
         return revoked;
