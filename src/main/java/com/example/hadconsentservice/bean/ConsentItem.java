@@ -82,6 +82,10 @@ public class ConsentItem {
     @Transient
     private String artifactID;
     
+    @Transient
+    private Boolean emergency;
+
+    
     public String getArtifactID() {
         return artifactID;
     }
@@ -185,6 +189,12 @@ public class ConsentItem {
 
     public void setDelegationRequired(Boolean delegationRequired) {
         this.delegationRequired = delegationRequired;
+    }
+    public Boolean getEmergency() {
+        return emergency;
+    }
+    public void setEmergency(Boolean emergency) {
+        this.emergency = emergency;
     }
     
 }

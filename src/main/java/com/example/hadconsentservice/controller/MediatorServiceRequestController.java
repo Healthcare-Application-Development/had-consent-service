@@ -5,6 +5,8 @@ import com.example.hadconsentservice.bean.*;
 import com.example.hadconsentservice.encryption.AESUtils;
 import com.example.hadconsentservice.interfaces.MediatorServiceRequestInterface;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
+import com.example.hadconsentservice.repository.ConsentItemRepository;
+import com.example.hadconsentservice.repository.DelegateConsentRepository;
 import com.example.hadconsentservice.repository.MediatorServiceRequestRepository;
 import com.example.hadconsentservice.security.TokenManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +40,12 @@ public class MediatorServiceRequestController {
     @Autowired
     AESUtils aesUtils;
 
+    @Autowired
+    ConsentItemRepository consentItemRepository;
+
+    @Autowired
+    DelegateConsentRepository delegateConsentRepository;
+
     final MediatorServiceRequestInterface mediatorServiceRequestInterface;
     final ConsentArtifactRepository consentArtifactRepository;
 
@@ -52,12 +60,23 @@ public class MediatorServiceRequestController {
         String extractedToken = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(extractedToken);
         username = aesUtils.encrypt(username);
-        if (!username.equals(consentArtifact.getDoctorID())) {
+        boolean isDelegation = false;
+        DelegateConsent delegateConsent = null;
+        if (consentArtifact.getDelegationID() != null) {
+            isDelegation = true;
+            delegateConsent = delegateConsentRepository.findById(Integer.parseInt(consentArtifact.getDelegationID())).get();
+        }
+        if ((!isDelegation && !username.equals(consentArtifact.getDoctorID())) || (isDelegation && !delegateConsent.getToDocID().equals(username))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         //Storing the artifact
         if (consentArtifact.isEmergency()) {
-            consentArtifactRepository.save(consentArtifact);
+            ConsentArtifact savedArtifact = consentArtifactRepository.save(consentArtifact);
+            for (ConsentItem consentItem : consentArtifact.getConsentItems()) {
+                consentItem.setConsentArtifact(consentArtifact);
+                consentItemRepository.save(consentItem);
+            }
+            consentArtifact = savedArtifact;
         }
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> params = new HashMap<>();
@@ -74,8 +93,8 @@ public class MediatorServiceRequestController {
         AuthenticationResponse authenticationResponse = objectMapper.readValue(tokenAsString, AuthenticationResponse.class);
         String token = authenticationResponse.getAccessToken();
         ConsentArtifact artifact = consentArtifactRepository.findById(consentArtifact.getArtifactId()).get();
-        String encryptedDoctorID = aesUtils.encrypt(artifact.getDoctorID());
-        if (!username.equals(encryptedDoctorID)) {
+        String encryptedDoctorID = artifact.getDoctorID();
+        if ((!isDelegation && !username.equals(encryptedDoctorID)) || (isDelegation && !delegateConsent.getToDocID().equals(username))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         //Checking consentArtifact if its acknowledged and approved

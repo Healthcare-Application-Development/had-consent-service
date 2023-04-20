@@ -5,6 +5,7 @@ import com.example.hadconsentservice.bean.ConsentItem;
 import com.example.hadconsentservice.bean.ConsentRequest;
 import com.example.hadconsentservice.bean.DelegateConsent;
 import com.example.hadconsentservice.bean.Response;
+import com.example.hadconsentservice.encryption.AESUtils;
 import com.example.hadconsentservice.interfaces.DoctorInterface;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
 import com.example.hadconsentservice.repository.ConsentItemRepository;
@@ -35,6 +36,9 @@ public class DoctorController {
 
     @Autowired
     TokenManager tokenManager;
+
+    @Autowired
+    AESUtils aesUtils;
 
     public DoctorController(DoctorInterface doctorInterface) {
         this.doctorInterface = doctorInterface;
@@ -91,19 +95,21 @@ public class DoctorController {
     }
 
     @GetMapping("/getAllConsents")
-    public ResponseEntity<Response> getConsentsByDoctorID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) {
+    public ResponseEntity<Response> getConsentsByDoctorID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        if (!username.equals(String.valueOf(id))) {
+        username = aesUtils.encrypt(username);
+        if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         return doctorInterface.getConsentsByDoctorID(id);
     }
 
     @PostMapping("/delegate-consent")
-    public ResponseEntity<Response> delegateConsent(@RequestHeader("Authorization") String authorization, @RequestBody DelegateConsent delegateConsent) {
+    public ResponseEntity<Response> delegateConsent(@RequestHeader("Authorization") String authorization, @RequestBody DelegateConsent delegateConsent) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
         if (!username.equals(delegateConsent.getFromDocID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -111,9 +117,10 @@ public class DoctorController {
     }
 
     @GetMapping("/get-delegate-consent-from")
-    public ResponseEntity<Response> getDelegateConsentFrom(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) {
+    public ResponseEntity<Response> getDelegateConsentFrom(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -121,9 +128,10 @@ public class DoctorController {
     }
 
     @GetMapping("/get-delegate-consent-to")
-    public ResponseEntity<Response> getDelegateConsentTo(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) {
+    public ResponseEntity<Response> getDelegateConsentTo(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -131,9 +139,11 @@ public class DoctorController {
     }
 
     @PutMapping("/update-delegation-status")
-    public ResponseEntity<Response> updateDelegationStatus(@RequestHeader("Authorization") String authorization, @PathParam("id") String id, @RequestBody DelegateConsent delegateConsent) {
+    public ResponseEntity<Response> updateDelegationStatus(@RequestHeader("Authorization") String authorization, @PathParam("id") String id, @RequestBody DelegateConsent delegateConsent) throws NumberFormatException, Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
+        System.out.println(username + " " + delegateConsent.getFromDocID());
         if (!username.equals(delegateConsent.getFromDocID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
