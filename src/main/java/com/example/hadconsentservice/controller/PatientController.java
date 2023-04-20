@@ -1,19 +1,42 @@
 package com.example.hadconsentservice.controller;
 
+import com.example.hadconsentservice.bean.AuthenticationResponse;
 import com.example.hadconsentservice.bean.ConsentArtifact;
 import com.example.hadconsentservice.bean.ConsentItem;
 import com.example.hadconsentservice.bean.ConsentRequest;
+import com.example.hadconsentservice.bean.ConsentRevoke;
+import com.example.hadconsentservice.bean.PatientHealthRecord;
+import com.example.hadconsentservice.bean.PatientHealthRecordRequest;
 import com.example.hadconsentservice.bean.Response;
+import com.example.hadconsentservice.encryption.AESUtils;
 import com.example.hadconsentservice.interfaces.PatientInterface;
+import com.example.hadconsentservice.repository.ConsentArtifactRepository;
+import com.example.hadconsentservice.repository.ConsentItemRepository;
 import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.ConsentArtifactService;
 import com.example.hadconsentservice.service.ConsentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -27,16 +50,33 @@ public class PatientController {
 
     @Autowired
     TokenManager tokenManager;
+    
     @Autowired
     private ConsentArtifactService consentArtifactService;
+    
     @Autowired
     private ConsentService consentService;
+    
+    @Autowired
+    private ConsentArtifactRepository consentArtifactRepository;
+    
+    @Autowired
+    private ConsentItemRepository consentItemRepository;
+    
+    @Autowired
+    AESUtils aesUtils;
+    
+    @Value("${mediator_username}")
+    String mediatorUsername;
 
-    @GetMapping("/getAllConsents/{id}")
-    public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathVariable String id) {
+    @Value("${mediator_pass}")
+    String mediatorPassword;
+    @GetMapping("/getAllConsents")
+    public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        if (!username.equals(String.valueOf(id))) {
+        username = aesUtils.encrypt(username);
+        if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         List<ConsentArtifact> ca = consentArtifactService.findAllByPatientID(id);
@@ -44,10 +84,11 @@ public class PatientController {
     }
 
     @PutMapping("/updateConsentItemStatus")
-    public ResponseEntity<Response> updateConsentItemStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentItemStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) throws Exception {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
         if (!username.equals(patientID)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -58,14 +99,15 @@ public class PatientController {
         if (res.getStatusCode() == HttpStatus.NOT_FOUND) {
             return res;
         }
-        return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
+        return res;
     }
 
     @PutMapping("/updateConsentStatus")
-    public ResponseEntity<Response> updateConsentStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) {
+    public ResponseEntity<Response> updateConsentStatus(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRequest consentRequest) throws Exception {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
         if (!username.equals(String.valueOf(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -73,16 +115,61 @@ public class PatientController {
         if (res.getStatusCode() == HttpStatus.FORBIDDEN) {
             return res;
         }
-        return patientInterface.getAllConsentsByID(consentRequest.getPatientId());
+        return res;
     }
     @PostMapping("/consent-artifacts/revoke")
-    public ConsentArtifact revokeConsentArtifact(@RequestParam Integer artifactId) {
-        return consentArtifactService.revokeConsentArtifact(artifactId);
+    public ResponseEntity<Response> revokeConsentArtifact(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRevoke consentRevoke) throws Exception {
+        String token = authorization.substring(7);
+        String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
+        ConsentArtifact artifact = consentArtifactRepository.findById(consentRevoke.getId()).get();
+        if (!username.equals(artifact.getPatientID())) {
+            return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(new Response(consentArtifactService.revokeConsentArtifact(consentRevoke.getId()), 200), HttpStatus.OK);
     }
 
     @PostMapping("/consent-item/revoke")
-    public ConsentItem revokeConsentArtifactitem(@RequestParam Integer Id) {
-        return consentService.revokeConsentArtifactItem(Id);
+    public ResponseEntity<Response> revokeConsentArtifactitem(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRevoke consentRevoke) throws Exception {
+        String token = authorization.substring(7);
+        String username = tokenManager.getUsernameFromToken(token);
+        username = aesUtils.encrypt(username);
+        ConsentItem consentItem = consentItemRepository.findById(consentRevoke.getId()).get();
+        if (!username.equals(consentItem.getPatientID())) {
+            return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<Response>(new Response(consentService.revokeConsentArtifactItem(consentRevoke.getId()), 200), HttpStatus.OK);
+    }
+
+    @PostMapping("/getHealthRecords")
+    public ResponseEntity<Response> getPatientHealthRecordsByABHAID(@RequestHeader("Authorization") String authorization, @RequestBody PatientHealthRecordRequest patientHealthRecordRequest) throws Exception {
+        String extractedToken = authorization.substring(7);
+        String username = tokenManager.getUsernameFromToken(extractedToken);
+        username = aesUtils.encrypt(username);
+        if (!username.equals(patientHealthRecordRequest.getAbhaID())) {
+            return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
+        }
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", mediatorUsername);
+        params.put("password", mediatorPassword);
+        params.put("role", "ADMIN");
+        HttpHeaders tokenHeaders = new HttpHeaders();
+        tokenHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> tokenEntity = new HttpEntity<>(params, tokenHeaders);
+        ResponseEntity<Response> tokenResponseEntity = restTemplate.exchange("http://localhost:9108/authenticate", HttpMethod.POST, tokenEntity,  new ParameterizedTypeReference<Response>() {});
+        Response response = tokenResponseEntity.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String tokenAsString = objectMapper.writeValueAsString(response.getObject());
+        AuthenticationResponse authenticationResponse = objectMapper.readValue(tokenAsString, AuthenticationResponse.class);
+        String token = authenticationResponse.getAccessToken();
+        String connectionURL = "http://localhost:9108/patientHealthRecord/getPatientHealthRecordByAbhaId?id=" + URLEncoder.encode(patientHealthRecordRequest.getAbhaID(), StandardCharsets.UTF_8);
+        HttpHeaders healthRecordHeaders = new HttpHeaders();
+        healthRecordHeaders.setContentType(MediaType.APPLICATION_JSON);
+        healthRecordHeaders.set("Authorization", "Bearer " + token);
+        ResponseEntity<List<PatientHealthRecord>> healthRecordEntity = restTemplate.exchange(connectionURL, HttpMethod.POST, new HttpEntity<>(healthRecordHeaders), new ParameterizedTypeReference<List<PatientHealthRecord>>() {});
+        List<PatientHealthRecord> patientHealthRecords = healthRecordEntity.getBody();
+        return new ResponseEntity<Response>(new Response(patientHealthRecords, 200), HttpStatus.OK);
     }
 
 }

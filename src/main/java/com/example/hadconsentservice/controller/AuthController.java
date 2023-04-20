@@ -3,6 +3,7 @@ package com.example.hadconsentservice.controller;
 import com.example.hadconsentservice.bean.AuthenticationResponse;
 import com.example.hadconsentservice.bean.Login;
 import com.example.hadconsentservice.bean.Response;
+import com.example.hadconsentservice.encryption.AESUtils;
 import com.example.hadconsentservice.interfaces.LoginInterface;
 import com.example.hadconsentservice.security.MyUserDetailsServiceImpl;
 import com.example.hadconsentservice.security.TokenManager;
@@ -35,17 +36,21 @@ public class AuthController {
     @Autowired
     TokenManager tokenManager;
 
+    @Autowired
+    AESUtils aesUtils;
+
     @PostMapping("/authenticate")
-    public ResponseEntity<Response> authenticate(@RequestBody Login login) throws JsonProcessingException {
+    public ResponseEntity<Response> authenticate(@RequestBody Login login) throws Exception {
+        String password = aesUtils.decrypt(login.getPassword());
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    login.getId(), login.getPassword()));
+                    login.getId(), password));
         } catch (final BadCredentialsException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         final UserDetails userDetails = myUserDetailsService.loadUserByUsername(String.valueOf(login.getId()));
         final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-        ResponseEntity<Response> responseEntity = loginInterface.authenticate(login.getId(), login.getPassword(), login.getRole());
+        ResponseEntity<Response> responseEntity = loginInterface.authenticate(login.getId(), password, login.getRole());
         authenticationResponse.setAccessToken(tokenManager.generateToken(userDetails));
 
         authenticationResponse.setId(String.valueOf(login.getId()));

@@ -46,6 +46,7 @@ public class DoctorService implements DoctorInterface {
         for (ConsentItem item : consentList) {
             ConsentArtifact artifact = item.getConsentArtifact();
             // item.setIsDelegated(artifact.getIsDelegated());
+            item.setEmergency(artifact.isEmergency());
             item.setArtifactID(String.valueOf(artifact.getArtifactId()));
             newConsentList.add(item);
         }

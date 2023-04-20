@@ -13,7 +13,9 @@ public class ConsentArtifact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer artifactId;
 
-
+    @Transient
+    private String delegationID;
+    
     private String doctorID;
 
     private String patientID;
@@ -142,5 +144,13 @@ public class ConsentArtifact {
                 ", revoked=" + revoked +
                 ", consentItems=" + consentItems +
                 '}';
+    }
+
+    public String getDelegationID() {
+        return delegationID;
+    }
+
+    public void setDelegationID(String delegationID) {
+        this.delegationID = delegationID;
     }
 }

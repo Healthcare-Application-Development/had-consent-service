@@ -5,6 +5,8 @@ import com.example.hadconsentservice.bean.ConsentItem;
 import com.example.hadconsentservice.bean.ConsentRequest;
 import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
+import com.example.hadconsentservice.repository.ConsentItemRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +20,27 @@ public class ConsentArtifactService {
     @Autowired
     private ConsentArtifactRepository consentArtifactRepository;
 
+    @Autowired
+    private ConsentItemRepository consentItemRepository;
+
     public List<ConsentArtifact> findAllByPatientID(String patientID) {
         return consentArtifactRepository.findAllByPatientID(patientID);
     }
 
 
-    public ConsentArtifact revokeConsentArtifact(Integer artifactId) {
+    public List<ConsentArtifact> revokeConsentArtifact(Integer artifactId) {
         ConsentArtifact consentArtifact = consentArtifactRepository.findById(artifactId)
                 .orElseThrow(() -> new IllegalArgumentException("ConsentArtifact not found with artifactId: " + artifactId));
+        List<ConsentItem> consentItems = consentArtifact.getConsentItems();
+        for (ConsentItem consentItem : consentItems) {
+            consentItem.setRevoked(true);
+            consentItemRepository.save(consentItem);
+        }
 
         consentArtifact.setRevoked(true);
         consentArtifactRepository.save(consentArtifact);
 
-        return consentArtifact;
+        return findAllByPatientID(consentArtifact.getPatientID());
     }
 
 
@@ -52,7 +62,7 @@ public class ConsentArtifactService {
         // if (consentRequest.getIsDelegated() != null) 
         //     consentArtifact.setIsDelegated(consentRequest.getIsDelegated());
         consentArtifactRepository.save(consentArtifact);
-        return new ResponseEntity<>(new Response(consentArtifact, 200), HttpStatus.OK);
+        return new ResponseEntity<>(new Response(consentArtifactRepository.findAllByPatientID(patientID), 200), HttpStatus.OK);
     }
 
 }

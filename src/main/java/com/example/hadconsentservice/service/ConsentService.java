@@ -1,6 +1,10 @@
 package com.example.hadconsentservice.service;
 import com.example.hadconsentservice.bean.ConsentArtifact;
 import com.example.hadconsentservice.bean.ConsentItem;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
 import com.example.hadconsentservice.repository.ConsentItemRepository;
@@ -9,7 +13,8 @@ public class ConsentService {
 
     private final ConsentArtifactRepository consentArtifactRepository;
     private final ConsentItemRepository consentItemRepository;
-
+    @Autowired
+    ConsentArtifactService consentArtifactService;
     public ConsentService(ConsentArtifactRepository consentArtifactRepository,
                           ConsentItemRepository consentItemRepository) {
         this.consentArtifactRepository = consentArtifactRepository;
@@ -32,14 +37,24 @@ public class ConsentService {
     }
 
 
-    public ConsentItem revokeConsentArtifactItem(Integer Id) {
+    public List<ConsentArtifact> revokeConsentArtifactItem(Integer Id) {
         ConsentItem consentitem = consentItemRepository.findById(Id)
                 .orElseThrow(() -> new IllegalArgumentException("ConsentArtifact not found with artifactId: " + Id));
-
         consentitem.setRevoked(true);
         consentItemRepository.save(consentitem);
+        ConsentArtifact artifact = consentitem.getConsentArtifact();
+        List<ConsentItem> consentItems = artifact.getConsentItems();
+        boolean revoked = true;
+        for (ConsentItem cItem: consentItems) {
+            if (!cItem.isRevoked()) {
+                revoked = false;
+                break;
+            } 
+        }
+        artifact.setRevoked(revoked);
+        consentArtifactRepository.save(artifact);
 
-        return consentitem;
+        return consentArtifactService.findAllByPatientID(consentitem.getPatientID());
     }
 
 

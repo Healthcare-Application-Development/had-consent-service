@@ -4,7 +4,10 @@ import com.example.hadconsentservice.bean.ConsentItem;
 import com.example.hadconsentservice.bean.ConsentRequest;
 import com.example.hadconsentservice.bean.Response;
 import com.example.hadconsentservice.interfaces.PatientInterface;
+import com.example.hadconsentservice.repository.ConsentArtifactRepository;
 import com.example.hadconsentservice.repository.ConsentItemRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import java.util.Optional;
 public class PatientService implements PatientInterface {
     final ConsentItemRepository consentRepository;
 
+    @Autowired
+    ConsentArtifactRepository consentArtifactRepository;
     public PatientService(ConsentItemRepository consentRepository) {
         this.consentRepository = consentRepository;
     }
@@ -53,7 +58,7 @@ public class PatientService implements PatientInterface {
             consent.setIsDelegated(consentRequest.getIsDelegated());
             try {
                 consentRepository.save(consent);
-                return new ResponseEntity<>(new Response(consent, 200), HttpStatus.OK);
+                return new ResponseEntity<>(new Response(consentArtifactRepository.findAllByPatientID(patientID), 200), HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(new Response(e.getMessage(), 400), HttpStatus.NOT_FOUND);
             }
