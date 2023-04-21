@@ -11,12 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AESUtils {
-  @Value("${SECRET_KEY}")
-  public String SECRET_KEY;
 
-  public String encrypt(String plainTextData) throws Exception {
+  public String encrypt(String plainTextData, String secretKey) throws Exception {
     try {
-      String iv = SECRET_KEY.substring(0, 16);
+      String iv = secretKey.substring(0, 16);
 
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
 
@@ -25,7 +23,7 @@ public class AESUtils {
       byte[] plaintext = new byte[plaintextLength];
       System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
 
-      SecretKeySpec keyspec = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+      SecretKeySpec keyspec = new SecretKeySpec(secretKey.getBytes(), "AES");
       IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
       cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
@@ -39,14 +37,14 @@ public class AESUtils {
     }
   }
 
-  public String decrypt(String cipherTextData) throws Exception {
+  public String decrypt(String cipherTextData, String secretKey) throws Exception {
     try {
-      String iv = SECRET_KEY.substring(0, 16);
+      String iv = secretKey.substring(0, 16);
 
       byte[] encrypted = Base64.getDecoder().decode(cipherTextData);
 
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-      SecretKeySpec keyspec = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+      SecretKeySpec keyspec = new SecretKeySpec(secretKey.getBytes(), "AES");
       IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
       cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
