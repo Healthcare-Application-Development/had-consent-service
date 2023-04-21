@@ -71,11 +71,16 @@ public class PatientController {
 
     @Value("${mediator_pass}")
     String mediatorPassword;
+
+
+    @Value("${CMS_SECRET_KEY}")
+    String cmsSecretString;
+
     @GetMapping("/getAllConsents")
     public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -88,7 +93,7 @@ public class PatientController {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(patientID)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -107,7 +112,7 @@ public class PatientController {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(String.valueOf(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -121,7 +126,7 @@ public class PatientController {
     public ResponseEntity<Response> revokeConsentArtifact(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRevoke consentRevoke) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         ConsentArtifact artifact = consentArtifactRepository.findById(consentRevoke.getId()).get();
         if (!username.equals(artifact.getPatientID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
@@ -133,7 +138,7 @@ public class PatientController {
     public ResponseEntity<Response> revokeConsentArtifactitem(@RequestHeader("Authorization") String authorization, @RequestBody ConsentRevoke consentRevoke) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         ConsentItem consentItem = consentItemRepository.findById(consentRevoke.getId()).get();
         if (!username.equals(consentItem.getPatientID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
@@ -145,7 +150,7 @@ public class PatientController {
     public ResponseEntity<Response> getPatientHealthRecordsByABHAID(@RequestHeader("Authorization") String authorization, @RequestBody PatientHealthRecordRequest patientHealthRecordRequest) throws Exception {
         String extractedToken = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(extractedToken);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(patientHealthRecordRequest.getAbhaID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }

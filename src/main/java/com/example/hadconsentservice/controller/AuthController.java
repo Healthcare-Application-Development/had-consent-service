@@ -10,6 +10,7 @@ import com.example.hadconsentservice.security.TokenManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,9 +40,13 @@ public class AuthController {
     @Autowired
     AESUtils aesUtils;
 
+
+    @Value("${CMS_SECRET_KEY}")
+    String cmsSecretString;
+    
     @PostMapping("/authenticate")
     public ResponseEntity<Response> authenticate(@RequestBody Login login) throws Exception {
-        String password = aesUtils.decrypt(login.getPassword());
+        String password = aesUtils.decrypt(login.getPassword(), cmsSecretString);
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     login.getId(), password));

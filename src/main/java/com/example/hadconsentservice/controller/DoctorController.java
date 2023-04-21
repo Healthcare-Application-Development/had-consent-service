@@ -14,6 +14,7 @@ import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.ConsentService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,10 @@ public class DoctorController {
     @Autowired
     AESUtils aesUtils;
 
+
+    @Value("${CMS_SECRET_KEY}")
+    String cmsSecretString;
+    
     public DoctorController(DoctorInterface doctorInterface) {
         this.doctorInterface = doctorInterface;
     }
@@ -98,7 +103,7 @@ public class DoctorController {
     public ResponseEntity<Response> getConsentsByDoctorID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -109,7 +114,7 @@ public class DoctorController {
     public ResponseEntity<Response> delegateConsent(@RequestHeader("Authorization") String authorization, @RequestBody DelegateConsent delegateConsent) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(delegateConsent.getFromDocID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -120,7 +125,7 @@ public class DoctorController {
     public ResponseEntity<Response> getDelegateConsentFrom(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -131,7 +136,7 @@ public class DoctorController {
     public ResponseEntity<Response> getDelegateConsentTo(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         if (!username.equals(id)) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -142,7 +147,7 @@ public class DoctorController {
     public ResponseEntity<Response> updateDelegationStatus(@RequestHeader("Authorization") String authorization, @PathParam("id") String id, @RequestBody DelegateConsent delegateConsent) throws NumberFormatException, Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
         System.out.println(username + " " + delegateConsent.getFromDocID());
         if (!username.equals(delegateConsent.getFromDocID())) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);

@@ -43,6 +43,13 @@ public class MediatorServiceRequestController {
     @Autowired
     ConsentItemRepository consentItemRepository;
 
+    @Value("${CMS_SECRET_KEY}")
+    String cmsSecretString;
+
+    @Value("${HOSPITAL_SECRET_KEY}")
+    String hospitalSecretKey;
+    
+
     @Autowired
     DelegateConsentRepository delegateConsentRepository;
 
@@ -59,7 +66,8 @@ public class MediatorServiceRequestController {
     public ResponseEntity<List<PatientHealthRecord>> getPatientDataByIdAndRecordType(@RequestHeader("Authorization") String authorization, @RequestBody ConsentArtifact consentArtifact) throws Exception {
         String extractedToken = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(extractedToken);
-        username = aesUtils.encrypt(username);
+        username = aesUtils.encrypt(username, cmsSecretString);
+        System.out.println(aesUtils.encrypt(consentArtifact.getDoctorID(), cmsSecretString));
         boolean isDelegation = false;
         DelegateConsent delegateConsent = null;
         if (consentArtifact.getDelegationID() != null) {
@@ -104,11 +112,14 @@ public class MediatorServiceRequestController {
             for (int i = 0; i < consentItemList.size(); i++) {
                 ConsentItem consentItemTemp=consentItemList.get(i);
                 if(consentArtifact.isEmergency() || (consentItemTemp.getConsentAcknowledged() && consentItemTemp.getApproved())) {
+                    consentItemTemp.setPatientID(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getPatientID(), cmsSecretString), hospitalSecretKey));
+                    consentItemTemp.setConsentMessage(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getConsentMessage(), cmsSecretString), hospitalSecretKey));
+                    System.out.print(consentItemTemp.getPatientID() + "  " + consentItemTemp.getConsentMessage());
                     consentItemListFiltered.add(consentItemTemp);
                 }
             }
             artifact.setConsentItems(consentItemListFiltered);
-
+            
             //calling mediator service
             String endpointUrl = "http://localhost:9108/patientHealthRecord/getPatientHealthRecord";
             HttpHeaders headers = new HttpHeaders();
@@ -117,7 +128,12 @@ public class MediatorServiceRequestController {
             HttpEntity<ConsentArtifact> requestEntity = new HttpEntity<>(artifact, headers);
             ResponseEntity<List<PatientHealthRecord>> responseEntity =restTemplate.exchange(endpointUrl,HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<PatientHealthRecord>>() {});
             List<PatientHealthRecord> records = responseEntity.getBody();
-
+            for (PatientHealthRecord patientHealthRecord : records) {
+                patientHealthRecord.setAbhaId(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getAbhaId(), hospitalSecretKey), cmsSecretString));
+                patientHealthRecord.setDescription(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getDescription(), hospitalSecretKey), cmsSecretString));
+                patientHealthRecord.setHospitalName(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getHospitalName(), hospitalSecretKey), cmsSecretString));
+                patientHealthRecord.setRecordType(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getRecordType(), hospitalSecretKey), cmsSecretString));
+            }
             return new ResponseEntity<List<PatientHealthRecord>>(records, HttpStatus.OK);
 
         }
