@@ -76,6 +76,9 @@ public class PatientController {
     @Value("${CMS_SECRET_KEY}")
     String cmsSecretString;
 
+    @Value("${HOSPITAL_SECRET_KEY}")
+    String hospitalSecretKey;
+
     @GetMapping("/getAllConsents")
     public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
@@ -174,6 +177,12 @@ public class PatientController {
         healthRecordHeaders.set("Authorization", "Bearer " + token);
         ResponseEntity<List<PatientHealthRecord>> healthRecordEntity = restTemplate.exchange(connectionURL, HttpMethod.POST, new HttpEntity<>(healthRecordHeaders), new ParameterizedTypeReference<List<PatientHealthRecord>>() {});
         List<PatientHealthRecord> patientHealthRecords = healthRecordEntity.getBody();
+        for (PatientHealthRecord patientHealthRecord: patientHealthRecords) {
+            patientHealthRecord.setAbhaId(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getAbhaId(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setDescription(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getDescription(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setHospitalName(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getHospitalName(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setRecordType(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getRecordType(), hospitalSecretKey), cmsSecretString));
+        }
         return new ResponseEntity<Response>(new Response(patientHealthRecords, 200), HttpStatus.OK);
     }
 
