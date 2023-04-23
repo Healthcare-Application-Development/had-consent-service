@@ -23,8 +23,6 @@ public class LoginService implements LoginInterface {
     public ResponseEntity<Response> authenticate(Long id, String password, String role) {
         Login login = loginRepository.findByIdAndRole(id, role);
         String hashedPassword = BCrypt.hashpw(password,hash);
-
-
         if (login == null) {
             return new ResponseEntity<>(new Response("Incorrect Credentials", 400), HttpStatus.NOT_FOUND);
         }
