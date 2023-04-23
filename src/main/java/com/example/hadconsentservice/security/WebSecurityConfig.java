@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/", "/authenticate").permitAll()
-                .requestMatchers("/doctor/**").hasAnyAuthority("ROLE_Doctor")
+                .requestMatchers("/otp/**", "/doctor/**").hasAnyAuthority("ROLE_Doctor")
                 .requestMatchers("/patient/**").hasAnyAuthority("ROLE_Patient")
                 .requestMatchers("/mediatorServiceRequestController/**").hasAnyAuthority("ROLE_Doctor")
                 .and()
