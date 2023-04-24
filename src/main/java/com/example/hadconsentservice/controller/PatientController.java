@@ -15,6 +15,7 @@ import com.example.hadconsentservice.repository.ConsentItemRepository;
 import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.ConsentArtifactService;
 import com.example.hadconsentservice.service.ConsentService;
+import com.example.hadconsentservice.service.PatientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,6 +57,8 @@ public class PatientController {
     
     @Autowired
     private ConsentService consentService;
+    @Autowired
+    private PatientService patientService;
     
     @Autowired
     private ConsentArtifactRepository consentArtifactRepository;
@@ -78,13 +81,18 @@ public class PatientController {
 
     @Value("${HOSPITAL_SECRET_KEY}")
     String hospitalSecretKey;
+    String temp_patient_id;
 
     @GetMapping("/getAllConsents")
     public ResponseEntity<Response> findAllByPatientID(@RequestHeader("Authorization") String authorization, @PathParam("id") String id) throws Exception {
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-        if (!username.equals(id)) {
+
+        //System.out.println(temp_patient_id.equals("") && !username.equals(id));
+
+        if ((temp_patient_id.equals("") && !username.equals(id)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(id))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         List<ConsentArtifact> ca = consentArtifactService.findAllByPatientID(id);
@@ -96,8 +104,10 @@ public class PatientController {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-        if (!username.equals(patientID)) {
+        System.out.println("HERE");
+        if ((temp_patient_id.equals("") && !username.equals(patientID)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         ResponseEntity<Response> res = patientInterface.updateConsentStatus(consentRequest, String.valueOf(patientID));
@@ -115,8 +125,9 @@ public class PatientController {
         String patientID = consentRequest.getPatientId();
         String token = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(token);
+        temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-        if (!username.equals(String.valueOf(patientID))) {
+        if ((temp_patient_id.equals("") && !username.equals(String.valueOf(patientID))) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
         ResponseEntity<Response> res = consentArtifactService.updateConsentStatus(consentRequest, String.valueOf(patientID));

@@ -1,15 +1,14 @@
 package com.example.hadconsentservice.controller;
 
-import com.example.hadconsentservice.bean.AuthenticationResponse;
-import com.example.hadconsentservice.bean.Guardian;
-import com.example.hadconsentservice.bean.Login;
-import com.example.hadconsentservice.bean.Response;
+import com.example.hadconsentservice.bean.*;
 import com.example.hadconsentservice.encryption.AESUtils;
 import com.example.hadconsentservice.interfaces.LoginInterface;
 import com.example.hadconsentservice.repository.GuardianRepository;
 import com.example.hadconsentservice.security.MyUserDetailsServiceImpl;
 import com.example.hadconsentservice.security.TokenManager;
 import com.example.hadconsentservice.service.GuardianService;
+import com.example.hadconsentservice.service.LoginService;
+import com.example.hadconsentservice.service.PatientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,10 @@ public class AuthController {
     @Value("${CMS_SECRET_KEY}")
     String cmsSecretString;
 
+    @Autowired
     private GuardianService guardianService;
+    @Autowired
+    private LoginService loginService;
 
     @PostMapping("/authenticate")
     public ResponseEntity<Response> authenticate(@RequestBody Login login) throws Exception {
@@ -67,10 +69,10 @@ public class AuthController {
         Long id = login.getId();
         String role = login.getRole();
 
-        System.out.println(role);
         if(role.equals("guardian")){
-            Optional<Guardian> guardian = guardianService.guardianRepository.findById(id);
-            System.out.print(guardian);
+            Optional<Guardian> guardian = guardianService.findPatientById(id);
+            id = guardian.get().getAssignedPatientID();
+            authenticationResponse.setGuardianID(String.valueOf(id));
         }
         ResponseEntity<Response> responseEntity = loginInterface.authenticate(id, password, role);
 
@@ -79,10 +81,10 @@ public class AuthController {
         authenticationResponse.setId(String.valueOf(login.getId()));
         authenticationResponse.setName(login.getName());
         authenticationResponse.setRole(login.getRole());
-        ObjectMapper objectMapper = new ObjectMapper();
-        String loginString = objectMapper.writeValueAsString(responseEntity.getBody().getObject());
-        Login retreivedLogin = objectMapper.readValue(loginString, Login.class);
-        authenticationResponse.setName(retreivedLogin.getName());
+        //ObjectMapper objectMapper = new ObjectMapper();
+        //String loginString = objectMapper.writeValueAsString(responseEntity.getBody().getObject());
+        //Login retreivedLogin = objectMapper.readValue(loginString, Login.class);
+        //authenticationResponse.setName(retreivedLogin.getName());
         return new ResponseEntity<>(new Response(authenticationResponse, 200), HttpStatus.OK);
     }
 

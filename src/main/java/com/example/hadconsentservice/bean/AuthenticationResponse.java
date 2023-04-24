@@ -7,6 +7,16 @@ public class AuthenticationResponse {
     private String id;
     private String role;
 
+    private String guardianID;
+
+    public String getGuardianID() {
+        return guardianID;
+    }
+
+    public void setGuardianID(String guardianID) {
+        this.guardianID = guardianID;
+    }
+
     public String getRole() {
         return role;
     }
