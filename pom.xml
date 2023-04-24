@@ -85,9 +85,12 @@
 		    <artifactId>spring-cloud-vault-config</artifactId>
 		    <version>4.0.1</version>
 		</dependency>
-
-
-
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>9.5.0</version>
+			<scope>compile</scope>
+		</dependency>
 <!--		&lt;!&ndash; Runtime, com.sun.xml.bind module &ndash;&gt;-->
 <!--		<dependency>-->
 <!--			<groupId>org.glassfish.jaxb</groupId>-->

@@ -67,7 +67,6 @@ public class MediatorServiceRequestController {
         String extractedToken = authorization.substring(7);
         String username = tokenManager.getUsernameFromToken(extractedToken);
         username = aesUtils.encrypt(username, cmsSecretString);
-        System.out.println(aesUtils.encrypt(consentArtifact.getDoctorID(), cmsSecretString));
         boolean isDelegation = false;
         DelegateConsent delegateConsent = null;
         if (consentArtifact.getDelegationID() != null) {
@@ -111,10 +110,9 @@ public class MediatorServiceRequestController {
             List<ConsentItem> consentItemListFiltered=new ArrayList<>();
             for (int i = 0; i < consentItemList.size(); i++) {
                 ConsentItem consentItemTemp=consentItemList.get(i);
-                if(consentArtifact.isEmergency() || (consentItemTemp.getConsentAcknowledged() && consentItemTemp.getApproved())) {
+                if((consentArtifact.getConsentID().equals(String.valueOf(consentItemTemp.getId()))) && (consentArtifact.isEmergency() || (consentItemTemp.getConsentAcknowledged() && consentItemTemp.getApproved()))) {
                     consentItemTemp.setPatientID(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getPatientID(), cmsSecretString), hospitalSecretKey));
                     consentItemTemp.setConsentMessage(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getConsentMessage(), cmsSecretString), hospitalSecretKey));
-                    System.out.print(consentItemTemp.getPatientID() + "  " + consentItemTemp.getConsentMessage());
                     consentItemListFiltered.add(consentItemTemp);
                 }
             }
