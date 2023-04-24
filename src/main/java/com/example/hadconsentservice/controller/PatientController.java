@@ -90,8 +90,6 @@ public class PatientController {
         temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
 
-        //System.out.println(temp_patient_id.equals("") && !username.equals(id));
-
         if ((temp_patient_id.equals("") && !username.equals(id)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(id))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -106,7 +104,7 @@ public class PatientController {
         String username = tokenManager.getUsernameFromToken(token);
         temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-        System.out.println("HERE");
+
         if ((temp_patient_id.equals("") && !username.equals(patientID)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
