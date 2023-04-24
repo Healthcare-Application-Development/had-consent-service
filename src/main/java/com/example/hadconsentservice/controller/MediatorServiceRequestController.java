@@ -110,7 +110,7 @@ public class MediatorServiceRequestController {
             List<ConsentItem> consentItemListFiltered=new ArrayList<>();
             for (int i = 0; i < consentItemList.size(); i++) {
                 ConsentItem consentItemTemp=consentItemList.get(i);
-                if(consentArtifact.isEmergency() || (consentItemTemp.getConsentAcknowledged() && consentItemTemp.getApproved())) {
+                if((consentArtifact.getConsentID().equals(String.valueOf(consentItemTemp.getId()))) && (consentArtifact.isEmergency() || (consentItemTemp.getConsentAcknowledged() && consentItemTemp.getApproved()))) {
                     consentItemTemp.setPatientID(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getPatientID(), cmsSecretString), hospitalSecretKey));
                     consentItemTemp.setConsentMessage(aesUtils.encrypt(aesUtils.decrypt(consentItemTemp.getConsentMessage(), cmsSecretString), hospitalSecretKey));
                     consentItemListFiltered.add(consentItemTemp);
