@@ -1,8 +1,6 @@
 package com.example.hadconsentservice.service;
 
-import com.example.hadconsentservice.bean.ConsentItem;
-import com.example.hadconsentservice.bean.ConsentRequest;
-import com.example.hadconsentservice.bean.Response;
+import com.example.hadconsentservice.bean.*;
 import com.example.hadconsentservice.interfaces.PatientInterface;
 import com.example.hadconsentservice.repository.ConsentArtifactRepository;
 import com.example.hadconsentservice.repository.ConsentItemRepository;
@@ -19,9 +17,11 @@ import java.util.Optional;
 @Service
 public class PatientService implements PatientInterface {
     final ConsentItemRepository consentRepository;
-
     @Autowired
     ConsentArtifactRepository consentArtifactRepository;
+
+    @Autowired
+    GuardianService guardianService;
     public PatientService(ConsentItemRepository consentRepository) {
         this.consentRepository = consentRepository;
     }
@@ -53,6 +53,7 @@ public class PatientService implements PatientInterface {
                 return new ResponseEntity<>(new Response("Consent Already Acknowledged", 404), HttpStatus.NOT_FOUND);
             }
             consent.setConsentAcknowledged(true);
+
             consent.setApproved(consentRequest.getApproved());
             consent.setOngoing(consentRequest.getOngoing());
             consent.setIsDelegated(consentRequest.getIsDelegated());
@@ -65,6 +66,20 @@ public class PatientService implements PatientInterface {
         }
 
         return new ResponseEntity<>(new Response("Unable to find patient records", 400), HttpStatus.NOT_FOUND);
+
+    }
+
+    public String get_patientID_from_guardianID(String guardianID){
+        String patient_id;
+        Optional<Guardian> guardian = guardianService.findPatientById(Long.parseLong(guardianID));
+        try{
+            patient_id = String.valueOf(guardian.get().getAssignedPatientID());
+            return patient_id;
+        }
+        catch(Exception e){
+            return "";
+        }
+
 
     }
 

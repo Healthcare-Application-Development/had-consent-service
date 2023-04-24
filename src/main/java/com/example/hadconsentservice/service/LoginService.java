@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class LoginService implements LoginInterface {
@@ -23,8 +25,6 @@ public class LoginService implements LoginInterface {
     public ResponseEntity<Response> authenticate(Long id, String password, String role) {
         Login login = loginRepository.findByIdAndRole(id, role);
         String hashedPassword = BCrypt.hashpw(password,hash);
-
-
         if (login == null) {
             return new ResponseEntity<>(new Response("Incorrect Credentials", 400), HttpStatus.NOT_FOUND);
         }
@@ -33,6 +33,10 @@ public class LoginService implements LoginInterface {
             return new ResponseEntity<>(new Response(login, 200), HttpStatus.OK);
         }
         return new ResponseEntity<>(new Response("Incorrect Password", 400), HttpStatus.NOT_FOUND);
+    }
+
+    public Optional<Login> findLoginByID(Long id){
+        return loginRepository.findById(id);
     }
 
 }
