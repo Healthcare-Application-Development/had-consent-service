@@ -53,6 +53,7 @@ public class PatientService implements PatientInterface {
                 return new ResponseEntity<>(new Response("Consent Already Acknowledged", 404), HttpStatus.NOT_FOUND);
             }
             consent.setConsentAcknowledged(true);
+
             consent.setApproved(consentRequest.getApproved());
             consent.setOngoing(consentRequest.getOngoing());
             consent.setIsDelegated(consentRequest.getIsDelegated());

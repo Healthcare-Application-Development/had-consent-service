@@ -69,9 +69,7 @@ public class AuthController {
         Long id = login.getId();
         String role = login.getRole();
 
-        System.out.println(role);
         if(role.equals("guardian")){
-            System.out.println(id);
             Optional<Guardian> guardian = guardianService.findPatientById(id);
             id = guardian.get().getAssignedPatientID();
             authenticationResponse.setGuardianID(String.valueOf(id));
