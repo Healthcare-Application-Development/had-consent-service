@@ -17,12 +17,12 @@ public class OTPController {
     OTPService otpService;
     
     @PostMapping("/send")
-    public String send(@RequestBody OtpVerification otpVerification) {
+    public String send(@RequestBody OtpVerification otpVerification) throws Exception {
         return otpService.sendKey(otpVerification);
     }
 
     @PostMapping("/verify")
-    public String verify(@RequestBody OtpVerification otpVerification) {
+    public String verify(@RequestBody OtpVerification otpVerification) throws Exception {
         return otpService.verifyKey(otpVerification);
     }
 }
