@@ -17,15 +17,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class GuardianService implements GuardianInterface {
+public class GuardianService{
     @Autowired
-    public final GuardianRepository guardianRepository;
+    private GuardianRepository guardianRepository;
 
-    public GuardianService(GuardianRepository guardianRepository) {
-        this.guardianRepository = guardianRepository;
-    }
-
-    public Optional<Guardian> findByID(Long guardianID) {
+    public Optional<Guardian> findPatientById(Long guardianID) {
         return guardianRepository.findById(guardianID);
     }
 

@@ -67,7 +67,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/", "/authenticate").permitAll()
                 .requestMatchers("/doctor/**").hasAnyAuthority("ROLE_Doctor")
-                .requestMatchers("/patient/**").hasAnyAuthority("ROLE_Patient")
+                .requestMatchers("/patient/**").hasAnyAuthority("ROLE_Patient", "ROLE_Guardian")
                 .requestMatchers("/mediatorServiceRequestController/**").hasAnyAuthority("ROLE_Doctor")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
