@@ -85,8 +85,9 @@ public class DoctorService implements DoctorInterface {
                 LocalDateTime now = LocalDateTime.now();
 
 
-                FileWriter myWriter = new FileWriter("logs/delegated_consents.txt", true);
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
                 BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Delegate | TimeStamp;DelegateFromDoctorID;DelegateToDoctorID;DelegatePatientID"+"\n");
                 br.write("\n"+dtf.format(now).toString() + ";" +delegateConsent.getFromDocID().toString()+";"+delegateConsent.getToDocID().toString()+";"+delegateConsent.getPatientID()+"\n");
                 br.close();
                 myWriter.close();

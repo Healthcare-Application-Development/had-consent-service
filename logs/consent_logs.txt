@@ -1,0 +1,5 @@
+RevokeTimeStamp;ArtifactID;PatientID;DoctorID;IsRevoked
+2023/04/25 22:24:04;15;jDUFzme0aLD13+xKXP2Klw==;F2tZd9lpZvkeaj/XdtuEDA==;true
+
+RevokeTimeStamp;ArtifactID;PatientID;DoctorID;IsRevoked
+2023/04/25 22:26:40;16;jDUFzme0aLD13+xKXP2Klw==;F2tZd9lpZvkeaj/XdtuEDA==;true

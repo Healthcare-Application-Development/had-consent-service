@@ -48,8 +48,9 @@ public class ConsentArtifactService {
             LocalDateTime now = LocalDateTime.now();
 
 
-            FileWriter myWriter = new FileWriter("logs/revoked_consents.txt", true);
+            FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
             BufferedWriter br = new BufferedWriter(myWriter);
+            br.write("\n"+"Revoke artifact | TimeStamp;ArtifactID;PatientID;DoctorID;IsRevoked");
             br.write("\n"+dtf.format(now).toString() + ";" +consentArtifact.getArtifactId().toString()+";"+consentArtifact.getPatientID()+";"+consentArtifact.getDoctorID()+";"+consentArtifact.getRevoked()+"\n");
             br.close();
             myWriter.close();

@@ -94,8 +94,9 @@ public class MediatorServiceRequestController {
                 LocalDateTime now = LocalDateTime.now();
 
 
-                FileWriter myWriter = new FileWriter("logs/emergency_consents.txt", true);
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
                 BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Emergency | TimeStamp;ArtifactID;PatientID;DoctorID;IsEmergency"+"\n");
                 br.write("\n"+dtf.format(now).toString() + ";" +consentArtifact.getArtifactId().toString()+";"+consentArtifact.getPatientID()+";"+consentArtifact.getDoctorID()+";"+consentArtifact.isEmergency()+"\n");
                 br.close();
                 myWriter.close();
@@ -126,6 +127,24 @@ public class MediatorServiceRequestController {
         }
         //Checking consentArtifact if its acknowledged and approved
         if(consentArtifact.isEmergency() || (artifact.getConsentAcknowledged() && artifact.getApproved())){
+
+            try{
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+
+
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
+                BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Access | TimeStamp;ArtifactID"+"\n");
+                br.write("\n"+dtf.format(now).toString() + ";" +consentArtifact.getArtifactId().toString());
+                br.close();
+                myWriter.close();
+
+            } catch (Exception e){
+                System.out.println("Logging Failed");
+                System.out.println(e.getMessage());
+            }
+
             List<ConsentItem> consentItemList=artifact.getConsentItems();
             List<ConsentItem> consentItemListFiltered=new ArrayList<>();
             for (int i = 0; i < consentItemList.size(); i++) {

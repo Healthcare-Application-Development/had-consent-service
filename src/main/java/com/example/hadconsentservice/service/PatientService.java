@@ -71,8 +71,9 @@ public class PatientService implements PatientInterface {
                 LocalDateTime now = LocalDateTime.now();
 
 
-                FileWriter myWriter = new FileWriter("logs/update_consent_status_logs.txt", true);
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
                 BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Update Consent | TimeStamp;PatientID;DoctorID;IsApproved;ArtifactID;IsDelegated;IsOngoing;FromDate;ToDate;Approved");
                 br.write("\n"+dtf.format(now).toString() + ";" +consent.getPatientID().toString()+";"+consent.getDoctorID().toString()+";"+consent.getApproved().toString()+";"+consent.getArtifactID()+";"+consent.getDelegationRequired().toString()+";"+consent.getOngoing().toString()+";"+consent.getFromDate().toString()+";"+consent.getToDate().toString()+";"+consent.getApproved());
                 br.close();
                 myWriter.close();
