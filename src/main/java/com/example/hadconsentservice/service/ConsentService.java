@@ -2,6 +2,10 @@ package com.example.hadconsentservice.service;
 import com.example.hadconsentservice.bean.ConsentArtifact;
 import com.example.hadconsentservice.bean.ConsentItem;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,24 @@ public class ConsentService {
             } 
         }
         artifact.setRevoked(revoked);
+
+        try{
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+
+            FileWriter myWriter = new FileWriter("logs/revoked_consents.txt", true);
+            BufferedWriter br = new BufferedWriter(myWriter);
+            br.write("\n"+dtf.format(now).toString() + ";" +artifact.getArtifactId().toString()+";"+artifact.getPatientID()+";"+artifact.getDoctorID()+";"+artifact.getRevoked()+"\n");
+            br.close();
+            myWriter.close();
+
+        } catch (Exception e){
+            System.out.println("Logging Failed");
+            System.out.println(e.getMessage());
+        }
+
+
         consentArtifactRepository.save(artifact);
 
         return consentArtifactService.findAllByPatientID(consentitem.getPatientID());

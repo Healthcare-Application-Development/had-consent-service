@@ -73,7 +73,7 @@ public class PatientService implements PatientInterface {
 
                 FileWriter myWriter = new FileWriter("logs/update_consent_status_logs.txt", true);
                 BufferedWriter br = new BufferedWriter(myWriter);
-                br.write("\n"+dtf.format(now).toString() + ";" +consent.getPatientID().toString()+";"+consent.getDoctorID().toString()+";"+consent.getApproved().toString()+";"+consent.getArtifactID()+";"+consent.getDelegationRequired().toString()+";"+consent.getOngoing().toString()+"/n");
+                br.write("\n"+dtf.format(now).toString() + ";" +consent.getPatientID().toString()+";"+consent.getDoctorID().toString()+";"+consent.getApproved().toString()+";"+consent.getArtifactID()+";"+consent.getDelegationRequired().toString()+";"+consent.getOngoing().toString()+";"+consent.getFromDate().toString()+";"+consent.getToDate().toString()+";"+consent.getApproved());
                 br.close();
                 myWriter.close();
 
