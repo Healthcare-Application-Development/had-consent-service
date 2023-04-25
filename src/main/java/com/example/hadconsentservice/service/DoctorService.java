@@ -14,6 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +79,25 @@ public class DoctorService implements DoctorInterface {
         // TODO Auto-generated method stub
         List<DelegateConsent> delegateConsents = delegateConsentRepository.findByToDocID(toDocID);
         for (DelegateConsent delegateConsent : delegateConsents) {
-            delegateConsent.getConsentItemID().setArtifactID(String.valueOf(delegateConsent.getConsentItemID().getConsentArtifact().getArtifactId())); 
+            delegateConsent.getConsentItemID().setArtifactID(String.valueOf(delegateConsent.getConsentItemID().getConsentArtifact().getArtifactId()));
+            try{
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+
+
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
+                BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Delegate | TimeStamp;DelegateFromDoctorID;DelegateToDoctorID;DelegatePatientID"+"\n");
+                br.write("\n"+dtf.format(now).toString() + ";" +delegateConsent.getFromDocID().toString()+";"+delegateConsent.getToDocID().toString()+";"+delegateConsent.getPatientID()+"\n");
+                br.close();
+                myWriter.close();
+
+            } catch (Exception e){
+                System.out.println("Logging Failed");
+                System.out.println(e.getMessage());
+            }
          }
+
         return new ResponseEntity<Response>(new Response(delegateConsents, 200), HttpStatus.OK);
     }
 

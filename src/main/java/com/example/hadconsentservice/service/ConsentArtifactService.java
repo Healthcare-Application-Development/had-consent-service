@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -38,6 +42,24 @@ public class ConsentArtifactService {
         }
 
         consentArtifact.setRevoked(true);
+
+        try{
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+
+            FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
+            BufferedWriter br = new BufferedWriter(myWriter);
+            br.write("\n"+"Revoke artifact | TimeStamp;ArtifactID;PatientID;DoctorID;IsRevoked");
+            br.write("\n"+dtf.format(now).toString() + ";" +consentArtifact.getArtifactId().toString()+";"+consentArtifact.getPatientID()+";"+consentArtifact.getDoctorID()+";"+consentArtifact.getRevoked()+"\n");
+            br.close();
+            myWriter.close();
+
+        } catch (Exception e){
+            System.out.println("Logging Failed");
+            System.out.println(e.getMessage());
+        }
+
         consentArtifactRepository.save(consentArtifact);
 
         return findAllByPatientID(consentArtifact.getPatientID());
