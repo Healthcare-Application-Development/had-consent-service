@@ -50,7 +50,7 @@ public class ConsentService {
         List<ConsentItem> consentItems = artifact.getConsentItems();
         boolean revoked = true;
         for (ConsentItem cItem: consentItems) {
-            if (!cItem.isRevoked()) {
+            if (cItem.getConsentAcknowledged() && cItem.getApproved() && !cItem.isRevoked()) {
                 revoked = false;
                 break;
             } 

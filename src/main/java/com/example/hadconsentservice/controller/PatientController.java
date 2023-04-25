@@ -79,6 +79,8 @@ public class PatientController {
     @Value("${CMS_SECRET_KEY}")
     String cmsSecretString;
 
+    @Value("${HOSPITAL_SECRET_KEY}")
+    String hospitalSecretKey;
     String temp_patient_id;
 
     @GetMapping("/getAllConsents")
@@ -87,8 +89,6 @@ public class PatientController {
         String username = tokenManager.getUsernameFromToken(token);
         temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-
-        //System.out.println(temp_patient_id.equals("") && !username.equals(id));
 
         if ((temp_patient_id.equals("") && !username.equals(id)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(id))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
@@ -104,7 +104,7 @@ public class PatientController {
         String username = tokenManager.getUsernameFromToken(token);
         temp_patient_id = patientService.get_patientID_from_guardianID(username);
         username = aesUtils.encrypt(username, cmsSecretString);
-        System.out.println("HERE");
+
         if ((temp_patient_id.equals("") && !username.equals(patientID)) || (!temp_patient_id.equals("") && !aesUtils.encrypt(temp_patient_id, cmsSecretString).equals(patientID))) {
             return new ResponseEntity<>(new Response("Authorization Failed", 403), HttpStatus.FORBIDDEN);
         }
@@ -186,6 +186,12 @@ public class PatientController {
         healthRecordHeaders.set("Authorization", "Bearer " + token);
         ResponseEntity<List<PatientHealthRecord>> healthRecordEntity = restTemplate.exchange(connectionURL, HttpMethod.POST, new HttpEntity<>(healthRecordHeaders), new ParameterizedTypeReference<List<PatientHealthRecord>>() {});
         List<PatientHealthRecord> patientHealthRecords = healthRecordEntity.getBody();
+        for (PatientHealthRecord patientHealthRecord: patientHealthRecords) {
+            patientHealthRecord.setAbhaId(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getAbhaId(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setDescription(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getDescription(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setHospitalName(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getHospitalName(), hospitalSecretKey), cmsSecretString));
+            patientHealthRecord.setRecordType(aesUtils.encrypt(aesUtils.decrypt(patientHealthRecord.getRecordType(), hospitalSecretKey), cmsSecretString));
+        }
         return new ResponseEntity<Response>(new Response(patientHealthRecords, 200), HttpStatus.OK);
     }
 

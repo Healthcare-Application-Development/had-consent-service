@@ -24,6 +24,17 @@ public class ConsentArtifact {
 
     private boolean emergency;
 
+    public String getConsentID() {
+        return consentID;
+    }
+
+    public void setConsentID(String consentID) {
+        this.consentID = consentID;
+    }
+
+    @Transient
+    private String consentID;
+
     @Column(columnDefinition = "boolean default false")
     private boolean revoked;
     private Boolean consentAcknowledged = false;
