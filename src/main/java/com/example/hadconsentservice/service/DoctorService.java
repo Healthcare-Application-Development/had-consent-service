@@ -61,6 +61,22 @@ public class DoctorService implements DoctorInterface {
     public ResponseEntity<Response> delegateConsent(DelegateConsent delegateConsent) {
         // TODO Auto-generated method stub
         delegateConsentRepository.save(delegateConsent);
+        try{
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+
+            FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
+            BufferedWriter br = new BufferedWriter(myWriter);
+            br.write("\n"+"Delegate | TimeStamp;DelegateFromDoctorID;DelegateToDoctorID;DelegatePatientID"+"\n");
+            br.write("\n"+dtf.format(now).toString() + ";" +delegateConsent.getFromDocID().toString()+";"+delegateConsent.getToDocID().toString()+";"+delegateConsent.getPatientID()+"\n");
+            br.close();
+            myWriter.close();
+
+        } catch (Exception e){
+            System.out.println("Logging Failed");
+            System.out.println(e.getMessage());
+        }
         return new ResponseEntity<>(new Response(delegateConsent, 200), HttpStatus.OK);
     }
 
@@ -80,22 +96,6 @@ public class DoctorService implements DoctorInterface {
         List<DelegateConsent> delegateConsents = delegateConsentRepository.findByToDocID(toDocID);
         for (DelegateConsent delegateConsent : delegateConsents) {
             delegateConsent.getConsentItemID().setArtifactID(String.valueOf(delegateConsent.getConsentItemID().getConsentArtifact().getArtifactId()));
-            try{
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-
-
-                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
-                BufferedWriter br = new BufferedWriter(myWriter);
-                br.write("\n"+"Delegate | TimeStamp;DelegateFromDoctorID;DelegateToDoctorID;DelegatePatientID"+"\n");
-                br.write("\n"+dtf.format(now).toString() + ";" +delegateConsent.getFromDocID().toString()+";"+delegateConsent.getToDocID().toString()+";"+delegateConsent.getPatientID()+"\n");
-                br.close();
-                myWriter.close();
-
-            } catch (Exception e){
-                System.out.println("Logging Failed");
-                System.out.println(e.getMessage());
-            }
          }
 
         return new ResponseEntity<Response>(new Response(delegateConsents, 200), HttpStatus.OK);
@@ -108,6 +108,22 @@ public class DoctorService implements DoctorInterface {
         if (delegateConsent != null) {
             delegateConsent.setIsDelegated(false);
             delegateConsentRepository.save(delegateConsent);
+            try{
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+    
+    
+                FileWriter myWriter = new FileWriter("logs/consent_logs.txt", true);
+                BufferedWriter br = new BufferedWriter(myWriter);
+                br.write("\n"+"Revoke Delegated Consent | TimeStamp;DelegateFromDoctorID;DelegateToDoctorID;DelegatePatientID;isDelegated"+"\n");
+                br.write("\n"+dtf.format(now).toString() + ";" +delegateConsent.getFromDocID().toString()+";"+delegateConsent.getToDocID().toString()+";"+delegateConsent.getPatientID()+";"+delegateConsent.getIsDelegated()+"\n");
+                br.close();
+                myWriter.close();
+    
+            } catch (Exception e){
+                System.out.println("Logging Failed");
+                System.out.println(e.getMessage());
+            }
             return new ResponseEntity<Response>(new Response(delegateConsentRepository.findByFromDocID(docID), 200), HttpStatus.OK);
         }
         return new ResponseEntity<Response>(new Response("Delegation request not found", 404), HttpStatus.NOT_FOUND); 
